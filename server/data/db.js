@@ -6,8 +6,8 @@ const Sequelize = require('sequelize');
 
 // Option 1: Passing parameters separately
 const sequelize = new Sequelize('reservations', 'root', sqlInfo.SQL_PASSWORD, {
-  host: 'database',
-  // host: 'localhost',
+  // host: 'database',
+  host: 'localhost',
   dialect: 'mysql'
 });
 
