@@ -26,7 +26,7 @@ app.use(express.json());
 // serves static files
 app.use('/:id', express.static(path.join(__dirname, '../public')));
 
-// GET '/api/listings/:id'--read property info for one property id
+// GET '/api/rooms/:id'--read property info for one property id
 // returns an array with a single object including all property information in the form:
 // [{pID, pMax_guests, pNightly_price, pCleaning_fee, pService_fee, pTaxes_fees, pBulkDiscount, pRequired_Week_Booking_Days, pRating, pReviews}]
 app.get('/id/:id', (req, res, next) => {
@@ -41,7 +41,7 @@ app.get('/id/:id', (req, res, next) => {
   });
 });
 
-// GET '/api/listings/:id/bookings'--read booked dates info for one property id
+// GET '/api/rooms/:id/bookings'--read booked dates info for one property id
 // returns an array of booked dates objects in the form: {bProperty_ID, bUser_ID, bGuest_Total, Date}
 app.get('/BookedDates/:bookedDates', (req, res, next) => {
   let bProperty_ID = req.params.bookedDates;
