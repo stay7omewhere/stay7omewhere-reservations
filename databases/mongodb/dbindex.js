@@ -35,5 +35,5 @@ let roomsSchema = mongoose.Schema({
     rRequired_Week_Booking_Days: Number,
     rRating: Number,
     rReviews: Number,
-    rBookings: [bookingsSchema] // each Bookings doc will be a subdocument of a Rooms doc:
+    rBookings: [bookingsSchema] // each Bookings doc will be a subdocument of a Rooms doc
 })
