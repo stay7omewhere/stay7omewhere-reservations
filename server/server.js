@@ -22,9 +22,13 @@ function shouldCompress (req, res) {
 
 app.use(express.json());
 
+// USE '/rooms/:id'
+// serves static files
 app.use('/:id', express.static(path.join(__dirname, '../public')));
 
-// GET --read property info for one property id
+// GET '/api/listings/:id'--read property info for one property id
+// returns an array with a single object including all property information in the form:
+// [{pID, pMax_guests, pNightly_price, pCleaning_fee, pService_fee, pTaxes_fees, pBulkDiscount, pRequired_Week_Booking_Days, pRating, pReviews}]
 app.get('/id/:id', (req, res, next) => {
   let pID = req.params.id;
   db.Properties.findAll( {
@@ -37,7 +41,8 @@ app.get('/id/:id', (req, res, next) => {
   });
 });
 
-// GET --read booked dates info for one property id
+// GET '/api/listings/:id/bookings'--read booked dates info for one property id
+// returns an array of booked dates objects in the form: {bProperty_ID, bUser_ID, bGuest_Total, Date}
 app.get('/BookedDates/:bookedDates', (req, res, next) => {
   let bProperty_ID = req.params.bookedDates;
   db.Booked.findAll( {
@@ -50,7 +55,8 @@ app.get('/BookedDates/:bookedDates', (req, res, next) => {
   });
 });
 
-// POST --create new bookings for each of the booked dates
+// POST '/api/bookings'--create new bookings for each of the booked dates
+// request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, Date}, all required
 app.post('/BookedDates', (req, res, next) => {
   var promises = [];
   let bookedDates = req.body.bookedDates;
@@ -60,9 +66,12 @@ app.post('/BookedDates', (req, res, next) => {
   Promise.all(promises);
 })
 
-// app.put('/id/:id', (req, res, next) => {
-//   let req.body.propertyUpdates;
-//   db.Properties.update(re.body.propertyUpdates)
+// PUT '/api/bookings'-- update bookings for a particular row
+// request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, Date}
+// returns changed row as an object using the second parameter in 
+// app.put('/api/bookings', (req, res, next) => {
+//   let req.body.bookingsUpdates;
+//   db.Properties.update(req.body.propertyUpdates)
 // })
 
 
