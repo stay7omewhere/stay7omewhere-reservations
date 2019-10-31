@@ -34,6 +34,7 @@ CREATE TABLE booked (
   bID int AUTO_INCREMENT,
   bProperty_ID int,
   bUser_ID int,
+  bGuest_Total int,
   Date VARCHAR(30),
 
   PRIMARY KEY (bID),
