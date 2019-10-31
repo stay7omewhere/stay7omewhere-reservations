@@ -7,29 +7,34 @@ CREATE TABLE users (
   userID    SERIAL,
   username  VARCHAR(25),
 
-  PRIMARY KEY(userID)
+  PRIMARY KEY(userID),
+  UNIQUE (username)
 );
 -- SERIAL: autoincrementing to billions
 
-CREATE TABLE properties (
-  pID               SERIAL,
-  pMax_guests       SMALLINT,
-  pNightly_price    MONEY,
-  pCleaning_fee     MONEY,
-  pService_fee      MONEY,
-  pTaxes_fees       MONEY,
-  pBulkDiscount     MONEY,
-  pRequired_Week_Booking_Days SMALLINT,
-  pRating           DECIMAL(3,2),
-  pReviews          SMALLINT,
+CREATE TABLE rooms (
+  rID               SERIAL,
+  rMax_guests       SMALLINT,
+  rNightly_price    MONEY,
+  rCleaning_fee     MONEY,
+  rService_fee      MONEY,
+  rTaxes_fees       MONEY,
+  rBulkDiscount     MONEY,
+  rRequired_Week_Booking_Days SMALLINT,
+  rRating           DECIMAL(3,2),
+  rReviews          SMALLINT,
 
-  PRIMARY KEY (pID)
+  PRIMARY KEY (rID)
 );
 
-CREATE TABLE booked (
+CREATE TABLE bookings (
   bID           SERIAL,
-  bProperty_ID  SERIAL      REFERENCES properties(pID),
-  bUser_ID      SERIAL      REFERENCES users(userID),
+  bProperty_ID  INTEGER      REFERENCES properties(rID),
+  bUser_ID      INTEGER      REFERENCES users(userID),
   bGuest_Total  SMALLINT,
-  Date          DATE
+  date          DATE
 );
+
+-- ALTERNATIVE to DATE
+-- bCheckin_Date        DATE,
+-- bCheckout_Date       DATE
