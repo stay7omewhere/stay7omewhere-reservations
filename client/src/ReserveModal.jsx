@@ -1,12 +1,12 @@
 import React from 'react';
 import styles from '../../public/styles/reserve.module.css';
 
-const ReserveModal = ({visibility, toggleReserveModal, checkinCheckout, postBookedDates}) => (
+const ReserveModal = ({visibility, toggleReserveModal, checkinCheckout, totalGuests, postBookedDates}) => (
   <div className={styles.reserveModal} style={{visibility: visibility}}>
     <div className={styles.reserveModalDetails}>
       <span className={styles.reserveModalClose} onClick={toggleReserveModal}>&times;</span>
       <div id={styles.signUp}>
-        Sign up to<button id={styles.bookReservation} onClick={() => postBookedDates(checkinCheckout[0], checkinCheckout[1])
+        Sign up to<button id={styles.bookReservation} onClick={() => postBookedDates(checkinCheckout[0], checkinCheckout[1], totalGuests)
         }>book</button>
       </div>
       <div id={styles.moments}>

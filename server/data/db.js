@@ -86,6 +86,9 @@ const Booked = sequelize.define('booked', {
       key: 'userID'
     }
   },
+  bGuest_Total: {
+    type: Sequelize.INTEGER,
+  },
   Date: {
     type: Sequelize.DATE
   }

@@ -49,7 +49,7 @@ class App extends React.Component {
   }
 
 
-  postBookedDates(checkin, checkout) {
+  postBookedDates(checkin, checkout, totalGuests) {
     if(checkin && checkout) {
       let bookedDate = moment(checkin).format('YYYY-MM-DD');
       let bookedDates = [];
@@ -58,6 +58,8 @@ class App extends React.Component {
             bProperty_ID: this.state.propertyID,
             bUser_ID: 1, //hardcoded to id: 1 right now since login functionality not setup
             Date: bookedDate,
+            // create number of guests? (for update)?
+            bGuest_Total: totalGuests
         });
         bookedDate = moment(bookedDate).add(1, 'days').format('YYYY-MM-DD');
       }
@@ -150,7 +152,11 @@ class App extends React.Component {
   }
 
   getTotalGuests(numAdults, numChildren) {
-    return Number(numAdults) + Number(numChildren);
+    const totalGuests = Number(numAdults) + Number(numChildren)
+    this.setState({
+      totalGuests
+    })
+    return totalGuests;
   }
 
   componentDidMount() {
@@ -197,6 +203,7 @@ class App extends React.Component {
           {this.state.numReservedDates
           ? <Reserve numReservedDates={this.state.numReservedDates} 
                      checkinCheckout={this.state.checkinCheckout}
+                     totalGuests={this.state.totalGuests}
                      postBookedDates={this.postBookedDates}/>
           : <ReserveLoading/>}
           

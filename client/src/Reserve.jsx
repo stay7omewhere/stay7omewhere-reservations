@@ -57,6 +57,7 @@ class Reserve extends React.Component {
             <ReserveModal visibility={this.state.visibility}
                           toggleReserveModal={this.toggleReserveModal}
                           postBookedDates={this.postBookedDates}
+                          totalGuests={this.props.totalGuests}
                           checkinCheckout={this.props.checkinCheckout}/>
         </div>
       </div>
