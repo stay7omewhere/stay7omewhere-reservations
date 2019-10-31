@@ -57,7 +57,7 @@ POST '/api/bookings' --create new bookings for each of the booked dates
     }
 
 PUT '/api/bookings' --update bookings for a particular booking date row
-- request body is JSON:
+- request body is JSON, also returns updated row in the same form:
     {
       bProperty_ID,
       bUser_ID,

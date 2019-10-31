@@ -71,8 +71,14 @@ app.post('/BookedDates', (req, res, next) => {
 // returns changed row as an object using the second parameter in 
 // app.put('/api/bookings', (req, res, next) => {
 //   let req.body.bookingsUpdates;
-//   db.Properties.update(req.body.propertyUpdates)
+//   db.Properties.update(req.body.bookingsUpdates).then().catch()
 // })
 
+// DELETE '/api/bookings'-- delete bookings for a particular booking date row
+// request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, Date}
+// app.put('/api/bookings', (req, res, next) => {
+//   let req.body.bookingsDeletion;
+//   db.Properties.update(req.body.bookingsDeletion).then().catch()
+// })
 
 app.listen(3000);
