@@ -22,7 +22,8 @@ let usersSchema = mongoose.Schema({
 let bookingsSchema = mongoose.Schema({
     bUser_ID: Number, // references Mongoose created id for each Users document
     bGuest_Total: Number,
-    bDates: [Date]
+    bCheckin_Date: Date,
+    bCheckout_Date: Date
 });
 
 let roomsSchema = mongoose.Schema({
