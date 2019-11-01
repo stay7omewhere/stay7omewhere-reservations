@@ -22,11 +22,11 @@ var populateBookedDates = function(bUser_ID) {
   var startDate = moment().format(); // Gets the current date and time YYYY-MM-DDT##:##:-##:##
   var endDate   = moment().endOf('month').format(); // Gets last day of the month in form ^
   var bookedDates = [];
-  for (let k = 1; k<= 100; k++) {
-    for (let i = 0; i < 4; i++) {
+  for (let k = 1; k<= 100; k++) { //iterates through all 100 users
+    for (let i = 0; i < 4; i++) { //iterates through 4 months
       var generatedDates = new Set();
-      var bookedDatesPerMonth = getRandomInt(3, 11);
-      for (let j = 0; j < bookedDatesPerMonth; j++) {
+      var bookedDatesPerMonth = getRandomInt(3, 11); 
+      for (let j = 0; j < bookedDatesPerMonth; j++) { //iterates through the random bookings count
         var date = moment(faker.date.between(startDate, endDate)).format('YYYY-MM-DD');
         if(generatedDates.has(date)) {
           while(generatedDates.has(date)) {
@@ -77,4 +77,4 @@ for (let i = 1; i <= 100; i++) {
     rReviews: rReviews});
 }
 
-db.Properties.bulkCreate(records).then(() => populateBookedDates(1));
+db.Rooms.bulkCreate(records).then(() => populateBookedDates(1));

@@ -104,4 +104,4 @@ const Bookings = sequelize.define('bookings', {
 
 exports.Users = Users;
 exports.Rooms = Rooms;
-exports.Booked = Bookings;
+exports.Bookings = Bookings;

@@ -45,11 +45,12 @@ app.get('/id/:id', (req, res, next) => {
 // returns an array of booked dates objects in the form: {bProperty_ID, bUser_ID, bGuest_Total, Date}
 app.get('/BookedDates/:bookedDates', (req, res, next) => {
   let bProperty_ID = req.params.bookedDates;
-  db.Booked.findAll( {
+  db.Bookings.findAll( {
     where: {
       bProperty_ID
     }
   }).then(property => {
+    console.log('Property: ', property)
     res.send(property);
     next();
   });
@@ -58,12 +59,22 @@ app.get('/BookedDates/:bookedDates', (req, res, next) => {
 // POST '/api/bookings'--create new bookings for each of the booked dates
 // request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, Date}, all required
 app.post('/BookedDates', (req, res, next) => {
-  var promises = [];
-  let bookedDates = req.body.bookedDates;
-  for (let i = 0; i < bookedDates.length; i++) {
-    promises.push(db.Booked.create({bProperty_ID: bookedDates[i].bProperty_ID, bUser_ID: bookedDates[i].bUser_ID, bGuest_Total: bookedDates[i].bGuest_Total, Date: bookedDates[i].Date}));
-  }
-  Promise.all(promises);
+  // need to make sure the db is checked first
+  db.Bookings.create(req.body.bookedDates).then(res.send());
+  // var promises = [];
+  // let bookedDates = req.body.bookedDates;
+  // for (let i = 0; i < bookedDates.length; i++) {
+  //   promises.push(db.Bookings.create(
+  //     {
+  //       bProperty_ID: bookedDates[i].bProperty_ID,
+  //       bUser_ID: bookedDates[i].bUser_ID,
+  //       bGuest_Total: bookedDates[i].bGuest_Total,
+  //       bCheckin_Date: bookedDates[i].bCheckin_Date,
+  //       bCheckout_Date: bookedDates[i].bCheckout_Date
+  //     }
+  //   ));
+  // }
+  // Promise.all(promises);
 })
 
 // PUT '/api/bookings'-- update bookings for a particular row
