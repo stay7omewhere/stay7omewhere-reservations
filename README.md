@@ -28,14 +28,14 @@ GET '/api/rooms/:id' --read property info for one property id
      {
        pID,                         (integer, not null)
        pMax_guests,                 (integer, not null, default 1)
-       pNightly_price,              (decimal)
-       pCleaning_fee,               (decimal)
-       pService_fee,                (decimal)
+       pNightly_price,              (decimal, not null)
+       pCleaning_fee,               (decimal, not null)
+       pService_fee,                (decimal, not null)
        pTaxes_fees,                 (decimal)
        pBulkDiscount,               (decimal)
        pRequired_Week_Booking_Days, (integer, not null, default 2)
        pRating,                     (decimal, not null, default 5)
-       pReviews                     (decimal, not null, default 0)
+       pReviews                     (decimal, not null, default 2)
       }
     ]
 
