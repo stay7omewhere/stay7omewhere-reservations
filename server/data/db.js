@@ -27,37 +27,37 @@ const Users = sequelize.define('users', {
   // options
 });
 
-const Properties = sequelize.define('properties', {
+const Rooms = sequelize.define('rooms', {
   // attributes
-  pID: {
+  rID: {
     type: Sequelize.INTEGER,
     primaryKey: true
   },
-  pMax_guests: {
+  rMax_guests: {
     type: Sequelize.INTEGER
   },
-  pNightly_price: {
+  rNightly_price: {
     type: Sequelize.DECIMAL(10, 2)
   },
-  pCleaning_fee: {
+  rCleaning_fee: {
     type: Sequelize.DECIMAL(10, 2)
   },
-  pService_fee: {
+  rService_fee: {
     type: Sequelize.DECIMAL(10, 2)
   },
-  pTaxes_fees: {
+  rTaxes_fees: {
     type: Sequelize.DECIMAL(10, 2)
   },
-  pBulkDiscount: {
+  rBulkDiscount: {
     type: Sequelize.DECIMAL(3, 2)
   },
-  pRequired_Week_Booking_Days: {
+  rRequired_Week_Booking_Days: {
     type: Sequelize.INTEGER
   },
-  pRating: {
+  rRating: {
     type: Sequelize.DECIMAL(3,2)
   },
-  pReviews: {
+  rReviews: {
     type: Sequelize.INTEGER
   }
 }, {
@@ -66,7 +66,7 @@ const Properties = sequelize.define('properties', {
 });
 
 
-const Booked = sequelize.define('booked', {
+const Bookings = sequelize.define('bookings', {
   // attributes
   bID: {
     type: Sequelize.INTEGER,
@@ -75,8 +75,8 @@ const Booked = sequelize.define('booked', {
   bProperty_ID: {
     type: Sequelize.INTEGER,
     references: {
-      model: Properties,
-      key: 'pID'
+      model: Rooms,
+      key: 'rID'
     }
   },
   bUser_ID: {
@@ -89,7 +89,10 @@ const Booked = sequelize.define('booked', {
   bGuest_Total: {
     type: Sequelize.INTEGER,
   },
-  Date: {
+  bCheckin_Date: {
+    type: Sequelize.DATE
+  },
+  bCheckout_Date: {
     type: Sequelize.DATE
   }
 }, {
@@ -100,5 +103,5 @@ const Booked = sequelize.define('booked', {
 
 
 exports.Users = Users;
-exports.Properties = Properties;
-exports.Booked = Booked;
+exports.Rooms = Rooms;
+exports.Booked = Bookings;

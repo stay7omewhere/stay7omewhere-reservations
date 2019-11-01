@@ -22,6 +22,7 @@ The reservations components for a restaurant reservations service.
 USE '/rooms/:id' --serves static files
 
 GET '/api/rooms/:id' --read property info for one property id
+- request body is empty
 - returns an array with a single object including all property information in the form:
    [
      {
@@ -39,6 +40,7 @@ GET '/api/rooms/:id' --read property info for one property id
     ]
 
 GET '/api/rooms/:id/bookings' --read booked dates info for one property id
+- request body is empty
 - returns an array of booked dates objects in the form: 
     {
       bProperty_ID,
@@ -53,26 +55,24 @@ POST '/api/bookings' --create new bookings for each of the booked dates
       bProperty_ID,
       bUser_ID,
       bGuest_Total,
-      Date
+      bCheckin_Date,
+      bCheckout_Date
     }
+- returns completed status code
 
 PUT '/api/bookings' --update bookings for a particular booking date row
-- request body is JSON, also returns updated row in the same form:
+- request body is JSON, also returns updated row in the same form (only bID required):
     {
-      bProperty_ID,
-      bUser_ID,
+      bID,
       bGuest_Total,
-      Date
+      bCheckin_Date,
+      bCheckout_Date
     }
+- returns completed status code
 
-DELETE '/api/bookings' --delete bookings for a particular booking date row
-- request body is JSON:
-    {
-      bProperty_ID,
-      bUser_ID,
-      bGuest_Total,
-      Date
-    }
+DELETE '/api/bookings/:id' --delete a particular booking
+- request body is empty
+- returns completed status code
 
 ### Installing Dependencies
 From within the root directory

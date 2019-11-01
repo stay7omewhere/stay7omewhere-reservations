@@ -14,8 +14,8 @@ CREATE TABLE users (
 
 CREATE TABLE rooms (
   rID               SERIAL,
-  rMax_guests       SMALLINT,
-  rNightly_price    MONEY,
+  rMax_guests       SMALLINT  NOT NULL,
+  rNightly_price    MONEY     NOT NULL,
   rCleaning_fee     MONEY,
   rService_fee      MONEY,
   rTaxes_fees       MONEY,
@@ -28,11 +28,12 @@ CREATE TABLE rooms (
 );
 
 CREATE TABLE bookings (
-  bID           SERIAL,
-  bProperty_ID  INTEGER      REFERENCES properties(rID),
-  bUser_ID      INTEGER      REFERENCES users(userID),
-  bGuest_Total  SMALLINT,
-  date          DATE
+  bID             SERIAL,
+  bProperty_ID    INTEGER     REFERENCES properties(rID),
+  bUser_ID        INTEGER     REFERENCES users(userID),
+  bGuest_Total    SMALLINT    NOT NULL,
+  bCheckin_Date   DATE        NOT NULL,
+  bCheckout_Date  DATE        NOT NULL
 );
 
 -- ALTERNATIVE to DATE

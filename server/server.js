@@ -30,10 +30,10 @@ app.use('/:id', express.static(path.join(__dirname, '../public')));
 // returns an array with a single object including all property information in the form:
 // [{pID, pMax_guests, pNightly_price, pCleaning_fee, pService_fee, pTaxes_fees, pBulkDiscount, pRequired_Week_Booking_Days, pRating, pReviews}]
 app.get('/id/:id', (req, res, next) => {
-  let pID = req.params.id;
-  db.Properties.findAll( {
+  let rID = req.params.id;
+  db.Rooms.findAll( {
     where: {
-      pID
+      rID
     }
   }).then(property => {
     res.send(property);
@@ -71,14 +71,14 @@ app.post('/BookedDates', (req, res, next) => {
 // returns changed row as an object using the second parameter in 
 // app.put('/api/bookings', (req, res, next) => {
 //   let req.body.bookingsUpdates;
-//   db.Properties.update(req.body.bookingsUpdates).then().catch()
+//   db.Rooms.update(req.body.bookingsUpdates).then().catch()
 // })
 
 // DELETE '/api/bookings'-- delete bookings for a particular booking date row
 // request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, Date}
 // app.put('/api/bookings', (req, res, next) => {
 //   let req.body.bookingsDeletion;
-//   db.Properties.update(req.body.bookingsDeletion).then().catch()
+//   db.Rooms.update(req.body.bookingsDeletion).then().catch()
 // })
 
 app.listen(3000);
