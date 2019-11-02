@@ -99,7 +99,8 @@ function writeTenMillionBookings(writer, encoding, callback) {
 
       for (let i = 0; i < 4; i++) {
         let generatedDates = new Set();
-        let bookingsPerMonth = Math.floor(Math.pow(Math.random(), 4) * 9);
+        // let bookingsPerMonth = Math.floor(Math.pow(Math.random(), 4) * 9);
+        let bookingsPerMonth = seed.getSkewedRandomBookings();
 
         for (let j = 0; j < bookingsPerMonth; j++) { //iterates through the random bookings count
           let checkinMoment = moment(faker.date.between(startDate, endDate))//.format('YYYY-MM-DD');
