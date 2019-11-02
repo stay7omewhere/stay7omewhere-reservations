@@ -42,7 +42,7 @@ writeTenMillionUsers(writeUsers, 'utf-8', () => {
 const writeRooms = fs.createWriteStream(path.resolve(__dirname, 'data', 'rooms.csv'));
 writeRooms.write('rID,rMax_guests,rNightly_price,rCleaning_fee,rService_fee,rTaxes_fees,rBulkDiscount,rRequired_Week_Booking_Days,rRating,rReviews\n', 'utf8');
 
-function writeOneMillionRooms(writer, encoding, callback) {
+function writeTenMillionRooms(writer, encoding, callback) {
   let i = 100; //1000000;
   let id = 0;
   function write() {
@@ -77,7 +77,7 @@ function writeOneMillionRooms(writer, encoding, callback) {
   write()
 }
   
-writeOneMillionRooms(writeRooms, 'utf-8', () => {
+writeTenMillionRooms(writeRooms, 'utf-8', () => {
   writeRooms.end();
 });
 
@@ -99,11 +99,11 @@ function writeTenMillionBookings(writer, encoding, callback) {
 
       for (let i = 0; i < 4; i++) {
         let generatedDates = new Set();
-        let bookingsPerMonth = seed.getRandomInt(4, 9);
+        let bookingsPerMonth = Math.floor(Math.pow(Math.random(), 4) * 9);
 
         for (let j = 0; j < bookingsPerMonth; j++) { //iterates through the random bookings count
           let checkinMoment = moment(faker.date.between(startDate, endDate))//.format('YYYY-MM-DD');
-          let randomStay = seed.getRandomInt(3, 7);
+          let randomStay = seed.getRandomInt(3, 12);
           let checkin = checkinMoment.format('YYYY-MM-DD');
           
           let checkoutMoment = checkinMoment.add(randomStay, 'days')//.format('YYYY-MM-DD');
@@ -122,7 +122,7 @@ function writeTenMillionBookings(writer, encoding, callback) {
               generatedDates.add(date);
             }
             let bProperty_ID = k + 1;
-            let bUser_ID = Math.ceil(Math.random() * 1000000);
+            let bUser_ID = Math.ceil(Math.random() * 10000000);
             let bGuest_Total = seed.getRandomInt(3, 11);
             let data = `${id},${bProperty_ID},${bUser_ID},${bGuest_Total},${checkin},${checkout}\n`;
             
@@ -166,6 +166,19 @@ writeTenMillionBookings(writeBookings, 'utf-8', () => {
 //     // handle error
 //   });
 
+// const roomsInp = fs.createReadStream('rooms.csv');
+// const roomsOut = fs.createWriteStream('rooms.csv.gz');
+  
+// roomsInp.pipe(gzip)
+//   .on('error', () => {
+//     // handle error
+//   })
+//   .pipe(roomsOut)
+//   .on('error', () => {
+//     // handle error
+//   });
+
+// const gzip = zlib.createGzip();
 // const usersInp = fs.createReadStream('users.csv');
 // const usersOut = fs.createWriteStream('users.csv.gz');
   
