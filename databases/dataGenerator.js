@@ -87,29 +87,31 @@ writeBookings.write('bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheck
 function writeTenMillionBookings(writer, encoding, callback) {
   let k = 100; //10000000;
   let id = 0;
-  let startDate = moment().format(); // Gets the current date and time YYYY-MM-DDT##:##:-##:##
-  let endMoment = moment().endOf('month');
-  let endDate = endMoment.format(); // Gets last day of the month in form ^
   
   function write() {
     let ok = true;
 
     do {
       k -= 1;
+      let startDate = moment().format(); // Gets the current date and time YYYY-MM-DDT##:##:-##:##
+        let endMoment = moment().endOf('month');
+        let endDate = endMoment.format(); // Gets last day of the month in form ^
 
       for (let i = 0; i < 4; i++) {
         let generatedDates = new Set();
-        let bookingsPerMonth = seed.getRandomInt(3, 11);
+        let bookingsPerMonth = seed.getRandomInt(4, 9);
 
         for (let j = 0; j < bookingsPerMonth; j++) { //iterates through the random bookings count
           let checkinMoment = moment(faker.date.between(startDate, endDate))//.format('YYYY-MM-DD');
-          let randomStay = seed.getRandomInt(2, 7);
+          let randomStay = seed.getRandomInt(3, 7);
+          let checkin = checkinMoment.format('YYYY-MM-DD');
+          
           let checkoutMoment = checkinMoment.add(randomStay, 'days')//.format('YYYY-MM-DD');
           if (moment.max(checkoutMoment, endMoment) === checkinMoment) {
-            checkoutMoment = endMoment;
-          }
-        let checkin = checkinMoment.format('YYYY-MM-DD');
-        let checkout = checkoutMoment.format('YYYY-MM-DD');
+              checkoutMoment = endMoment;
+            }
+            
+          let checkout = checkoutMoment.format('YYYY-MM-DD');
 
         if ( !( generatedDates.has(checkin) || generatedDates.has(checkout) ) ) {
             id += 1;
@@ -120,7 +122,7 @@ function writeTenMillionBookings(writer, encoding, callback) {
               generatedDates.add(date);
             }
             let bProperty_ID = k + 1;
-            let bUser_ID = Math.ceil(Math.random() * 10000000);
+            let bUser_ID = Math.ceil(Math.random() * 1000000);
             let bGuest_Total = seed.getRandomInt(3, 11);
             let data = `${id},${bProperty_ID},${bUser_ID},${bGuest_Total},${checkin},${checkout}\n`;
             
@@ -152,14 +154,26 @@ writeTenMillionBookings(writeBookings, 'utf-8', () => {
 });
 
 // const gzip = zlib.createGzip();
-// const inp = fs.createReadStream('users.csv');
-// const out = fs.createWriteStream('users.csv.gz');
+// const usersInp = fs.createReadStream('users.csv');
+// const usersOut = fs.createWriteStream('users.csv.gz');
   
-// inp.pipe(gzip)
+// usersInp.pipe(gzip)
 //   .on('error', () => {
 //     // handle error
 //   })
-//   .pipe(out)
+//   .pipe(usersOut)
+//   .on('error', () => {
+//     // handle error
+//   });
+
+// const usersInp = fs.createReadStream('users.csv');
+// const usersOut = fs.createWriteStream('users.csv.gz');
+  
+// usersInp.pipe(gzip)
+//   .on('error', () => {
+//     // handle error
+//   })
+//   .pipe(usersOut)
 //   .on('error', () => {
 //     // handle error
 //   });
