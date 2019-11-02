@@ -42,8 +42,8 @@ writeTenMillionUsers(writeUsers, 'utf-8', () => {
 const writeRooms = fs.createWriteStream(path.resolve(__dirname, 'data', 'rooms.csv'));
 writeRooms.write('rID,rMax_guests,rNightly_price,rCleaning_fee,rService_fee,rTaxes_fees,rBulkDiscount,rRequired_Week_Booking_Days,rRating,rReviews\n', 'utf8');
 
-function writeTenMillionRooms(writer, encoding, callback) {
-  let i = 100; //10000000;
+function writeOneMillionRooms(writer, encoding, callback) {
+  let i = 100; //1000000;
   let id = 0;
   function write() {
     let ok = true;
@@ -77,7 +77,7 @@ function writeTenMillionRooms(writer, encoding, callback) {
   write()
 }
   
-writeTenMillionRooms(writeRooms, 'utf-8', () => {
+writeOneMillionRooms(writeRooms, 'utf-8', () => {
   writeRooms.end();
 });
 
