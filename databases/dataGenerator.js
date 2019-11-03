@@ -123,7 +123,7 @@ function writeTenMillionBookings(writer, encoding, callback) {
               generatedDates.add(date);
             }
             let bProperty_ID = k + 1;
-            let bUser_ID = Math.ceil(Math.random() * 10000000);
+            let bUser_ID = Math.ceil(Math.random() * 100); //10000000
             let bGuest_Total = seed.getRandomInt(3, 11);
             let data = `${id},${bProperty_ID},${bUser_ID},${bGuest_Total},${checkin},${checkout}\n`;
             
