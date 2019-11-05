@@ -24,12 +24,12 @@ app.use(express.json());
 
 // USE '/rooms/:id'
 // serves static files
-app.use('/:id', express.static(path.join(__dirname, '../public')));
+app.use('/rooms/:id', express.static(path.join(__dirname, '../public')));
 
 // GET '/api/rooms/:id'--read property info for one property id
 // returns an array with a single object including all property information in the form:
 // [{pID, pMax_guests, pNightly_price, pCleaning_fee, pService_fee, pTaxes_fees, pBulkDiscount, pRequired_Week_Booking_Days, pRating, pReviews}]
-app.get('/id/:id', (req, res, next) => {
+app.get('/api/rooms/:id', (req, res, next) => {
   let rID = req.params.id;
   db.Rooms.findAll( {
     where: {

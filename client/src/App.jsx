@@ -36,7 +36,7 @@ class App extends React.Component {
       totalServiceFee: null,
       totalWeeklyDiscount: null,
       totalAmount: null,
-      propertyID: window.location.href.split('/')[3],
+      propertyID: window.location.href.split('/')[4],
       checkinCheckout: [null,null],
     };
 
@@ -82,9 +82,8 @@ class App extends React.Component {
   }
 
   getPropertyInfo() {
-    console.log('getting property info ')
-    // axios.get('http://3.133.54.136:3000/id/' + this.state.propertyID)
-    axios.get('http://localhost:3000/id/' + this.state.propertyID)
+    // axios.get('http://3.133.54.136:3000/api/rooms/' + this.state.propertyID)
+    axios.get('http://localhost:3000/api/rooms/' + this.state.propertyID)
       .then((res) => {
         console.log('res data /:id ', res.data)
         let propertyInfo = JSON.parse(JSON.stringify(this.state.propertyInfo));
@@ -170,9 +169,8 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    console.log("test?????")
     this.getPropertyInfo();
-    console.log(window.location.href.split('/')[3]);
+    console.log('Accessing property: ', window.location.href.split('/')[4]);
   }
 
   render() {
