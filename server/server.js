@@ -78,7 +78,7 @@ app.post('/BookedDates', (req, res, next) => {
 })
 
 // PUT '/api/bookings'-- update bookings for a particular row
-// request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, Date}
+// request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, bCheckin, bCheckout}
 // returns changed row as an object using the second parameter in 
 // app.put('/api/bookings', (req, res, next) => {
 //   let req.body.bookingsUpdates;

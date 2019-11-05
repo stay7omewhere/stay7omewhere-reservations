@@ -86,6 +86,7 @@ writeBookings.write('bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheck
 
 function writeTenMillionBookings(writer, encoding, callback) {
   let k = 10; //10000000;
+  let rID = 0;
   let id = 0;
   
   function write() {
@@ -93,6 +94,7 @@ function writeTenMillionBookings(writer, encoding, callback) {
 
     do {
       k -= 1;
+      rID += 1;
       let startDate = moment().format(); // Gets the current date and time YYYY-MM-DDT##:##:-##:##
         let endMoment = moment().endOf('month');
         let endDate = endMoment.format(); // Gets last day of the month in form ^
@@ -122,7 +124,7 @@ function writeTenMillionBookings(writer, encoding, callback) {
               let date = checkinMoment.add(l, 'days').format('YYYY-MM-DD');
               generatedDates.add(date);
             }
-            let bProperty_ID = k + 1;
+            let bProperty_ID = rID;
             let bUser_ID = Math.ceil(Math.random() * 10); //10000000
             let bGuest_Total = seed.getRandomInt(3, 11);
             let data = `${id},${bProperty_ID},${bUser_ID},${bGuest_Total},${checkin},${checkout}\n`;
