@@ -51,6 +51,13 @@ let bookingsSchema = mongoose.Schema({
   bCheckout_Date: {
     type: Date,
     // required: true
+  },
+  bHeld_At: {
+    type: Date,
+  },
+  bReserved: {
+    type: Boolean,
+    default: false
   }
 });
 

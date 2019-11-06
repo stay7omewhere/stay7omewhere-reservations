@@ -34,6 +34,8 @@ CREATE TABLE bookings (
   bGuest_Total    SMALLINT    NOT NULL,
   bCheckin_Date   DATE        NOT NULL,
   bCheckout_Date  DATE        NOT NULL,
+  bHeld_At        TIMESTAMP,
+  bReserved       BOOLEAN     DEFAULT FALSE,
 
   PRIMARY KEY (bID)
 );
@@ -46,6 +48,6 @@ COPY rooms (rID, rMax_guests, rNightly_price, rCleaning_fee, rService_fee, rTaxe
     FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/rooms.csv' 
     WITH DELIMITER ',' CSV HEADER NULL 'null';
 
-COPY bookings (bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date)
+COPY bookings (bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
     FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/bookings.csv' 
     WITH DELIMITER ',' CSV HEADER;
