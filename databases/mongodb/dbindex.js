@@ -15,7 +15,7 @@ db.once('open', function() {
 // Mongoose creates ids for each document in a model.  No need to create them.
 
 let usersSchema = mongoose.Schema({
-    userID: {
+    _id: {
         type: String,
         // unique: true,
         // required: true
@@ -28,7 +28,7 @@ let usersSchema = mongoose.Schema({
 })
 
 let bookingsSchema = mongoose.Schema({
-  bID:{
+  _id:{
     type: Number,
     // required: true
   },
@@ -62,7 +62,7 @@ let bookingsSchema = mongoose.Schema({
 });
 
 let roomsSchema = mongoose.Schema({
-  rID: {
+  _id: {
     type: Number,
     // required: true
   },
@@ -113,11 +113,32 @@ const User = mongoose.model('User', usersSchema);
 const Rooms = mongoose.model('Rooms', roomsSchema);
 const Bookings = mongoose.model('Bookings', bookingsSchema);
 
+// //Clear the user model on server restart to reset after testing
+// User.deleteMany({})
+//   .then(Rooms.deleteMany({}))
+//   .then(Bookings.deleteMany({}))
+//   .then(() => {
+    dbhelpers.saveCsvDataToModels(User, 'users.csv',  () => {
+      console.log('saved users to db');
+      dbhelpers.saveCsvDataToModels(Rooms, 'rooms.csv',  () => {
+        console.log('saved rooms to db');
+        dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings1.csv',  () => {
+          console.log('saved bookings1 to db.');
+          dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings2.csv',  () => {
+            console.log('saved bookings2 to db.');
+            dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings3.csv',  () => {
+              console.log('saved bookings3 to db.');
+              dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings4.csv',  () => {
+                console.log('saved bookings4 to db.');
+                dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings5.csv',  () => {
+                  console.log('saved bookings5 to db.')
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  // })
+  // .catch(err => console.log(`Error clearing the model: `, err));
 
-dbhelpers.saveCsvDataToModels(User, 'users.csv',  () => {
-  console.log('saved users to db');
-  dbhelpers.saveCsvDataToModels(Rooms, 'rooms.csv',  () => {
-    console.log('saved rooms to db');
-    dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings.csv',  () => console.log('saved bookings to db.'));
-  });
-});
