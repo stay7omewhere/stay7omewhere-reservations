@@ -16,6 +16,8 @@
     "dump": "mysql -u root -p < ./dump.sql",
     "dockerSchema": "mysql -h 127.0.0.1 -u root -p <./server/data/schema.sql",
     "generateCsvs": "node databases/dataGenerator.js",
+    "zipper": "node databases/zipper.js",
+    "unzipper": "node databases/unzipper.js",
     "seedMongoDb": "node databases/mongodb/dbindex.js"
   },
   "author": "",

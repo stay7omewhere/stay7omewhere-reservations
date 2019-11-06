@@ -2,9 +2,8 @@ const zlib = require('zlib');
 const fs = require('fs');
 const path = require('path');
 
-const gunzip = zlib.createGunzip();
-
 const unzipper = function(inpPath, outPath) {
+  const gunzip = zlib.createGunzip();
   const inp = fs.createReadStream(path.resolve(__dirname, 'data', inpPath));
   const out = fs.createWriteStream(path.resolve(__dirname, 'data', outPath));
     
