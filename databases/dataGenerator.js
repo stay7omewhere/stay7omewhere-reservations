@@ -45,21 +45,36 @@ writeRooms.write('rID,rMax_guests,rNightly_price,rCleaning_fee,rService_fee,rTax
 function writeTenMillionRooms(writer, encoding, callback) {
   let i = 10; //1000000;
   let id = 0;
+  let pseudoRandomID = 0
+
+  const pseduoMaxGuests = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+  const pseduoNightlyPrice = [89, 100, 105, 150, 189, 205, 235, 289, 300, 325];
+  const pseduoCleaningFee = [35, 45, 55, 65, 75, 81, 40, 80, 59, 49];
+  const pseudoTaxesFees = [null, 3, null, 5, null, null, null, null, 8, 10];
+  const pseudoBulkDiscount = [0.05, null, null, null, 0.05, null, null, null, 0.05, null];
+  const pseudoRequiredDays = [3, 3, 3, 4, 4, 5, 5, 6, 7, 3];
+  const pseudoRating = [2.7, 3.5, 3.6, 3.7, 4.1, 4.5, 4.6, 4.7, 4.8, 4.9];
+  const pseudoReview = [15, 63, 71, 89, 157, 186, 203, 879, 1017, 5203];
+
   function write() {
     let ok = true;
     do {
       i -= 1;
       id += 1;
-      let rMax_guests = seed.getRandomInt(4,13);
-      let rNightly_price = seed.getRandomInt(89, 326);
-      let rCleaning_fee = seed.getRandomInt(35,81); 
+
+      let rMax_guests = pseduoMaxGuests[pseudoRandomID];
+      let rNightly_price = pseduoNightlyPrice[pseudoRandomID];
+      let rCleaning_fee = pseduoCleaningFee[pseudoRandomID]; 
       let rService_fee = 0.13;  //13% pNightly_price + pCleaning_Fee
-      let rTaxes_fees = seed.shouldBeDisplayed(seed.getRandomInt(3,10));
-      let rBulkDiscount = seed.shouldBeDisplayed(0.05);
-      let rRequired_Week_Booking_Days = seed.getRandomInt(3,8); 
-      let rRating = Math.floor(Math.random() * (500 - 100) + 100) / 100;
-      let rReviews = seed.getRandomInt(5,2750);
+      let rTaxes_fees = pseudoTaxesFees[pseudoRandomID];
+      let rBulkDiscount = pseudoBulkDiscount[pseudoRandomID];
+      let rRequired_Week_Booking_Days = pseudoRequiredDays[pseudoRandomID]; 
+      let rRating = pseudoRating[pseudoRandomID];
+      let rReviews = pseudoReview[pseudoRandomID];
+      
       let data = `${id},${rMax_guests},${rNightly_price},${rCleaning_fee},${rService_fee},${rTaxes_fees},${rBulkDiscount},${rRequired_Week_Booking_Days},${rRating},${rReviews}\n`;
+      pseudoRandomID = (pseudoRandomID === 9) ? 0 : pseudoRandomID += 1;
+
       if (i === 0) {
         writer.write(data, encoding, callback);
       } else {
@@ -88,6 +103,13 @@ function writeTenMillionBookings(writer, encoding, callback) {
   let k = 10; //10000000;
   let rID = 0;
   let id = 0;
+  let pseudoRandomBookingsID = 0;
+  let pseudoRandomStayID = 0;
+  let pseudoRandomGuestsID = 0;
+
+  const pseudoBookingsPerMonth = [0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 8];
+  const pseudoStay = [3, 3, 3, 4, 4, 4, 5, 6, 9, 12];
+  const pseudoGuestTotal = [3, 4, 3, 4, 4, 6, 3, 6, 9, 11];
   
   function write() {
     let ok = true;
@@ -102,14 +124,17 @@ function writeTenMillionBookings(writer, encoding, callback) {
       for (let i = 0; i < 4; i++) {
         let generatedDates = new Set();
         // let bookingsPerMonth = Math.floor(Math.pow(Math.random(), 4) * 9);
-        let bookingsPerMonth = seed.getSkewedRandomBookings();
+
+        let bookingsPerMonth = pseudoBookingsPerMonth[pseudoRandomBookingsID];
+        pseudoRandomBookingsID = (pseudoRandomBookingsID === 14) ? 0 : pseudoRandomBookingsID += 1;
 
         for (let j = 0; j < bookingsPerMonth; j++) { //iterates through the random bookings count
-          let checkinMoment = moment(faker.date.between(startDate, endDate))//.format('YYYY-MM-DD');
-          let randomStay = seed.getRandomInt(3, 12);
+          let checkinMoment = moment(faker.date.between(startDate, endDate)); //.format('YYYY-MM-DD');
+          let randomStay = pseudoStay[pseudoRandomStayID];
+          pseudoRandomStayID = (pseudoRandomStayID === 9) ? 0 : pseudoRandomStayID += 1;
           let checkin = checkinMoment.format('YYYY-MM-DD');
-          
           let checkoutMoment = checkinMoment.add(randomStay, 'days')//.format('YYYY-MM-DD');
+
           if (moment.max(checkoutMoment, endMoment) === checkinMoment) {
               checkoutMoment = endMoment;
             }
@@ -126,7 +151,8 @@ function writeTenMillionBookings(writer, encoding, callback) {
             }
             let bProperty_ID = rID;
             let bUser_ID = Math.ceil(Math.random() * 10); //10000000
-            let bGuest_Total = seed.getRandomInt(3, 11);
+            let bGuest_Total = pseudoGuestTotal[pseudoRandomGuestsID];
+            pseudoRandomGuestsID = (pseudoRandomGuestsID === 9) ? 0 : pseudoRandomGuestsID += 1;
             let data = `${id},${bProperty_ID},${bUser_ID},${bGuest_Total},${checkin},${checkout}\n`;
             
             if (k === 0) {
