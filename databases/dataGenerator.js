@@ -1,5 +1,4 @@
 const faker = require('faker');
-const zlib = require('zlib');
 const fs = require('fs');
 const path = require('path');
 const moment = require('moment');
@@ -30,54 +29,6 @@ function writeTenMillion(writer, encoding, startId, dataFormatter, callback) {
     }
   write()
 }
-
-const writeUsers = fs.createWriteStream(path.resolve(__dirname, 'data', 'users.csv'));
-writeUsers.write('userID,username\n', 'utf8');
-
-writeTenMillion(writeUsers, 'utf-8', 0, seed.userRowFormatter, () => {
-  writeUsers.end();
-});
-
-const writeRooms = fs.createWriteStream(path.resolve(__dirname, 'data', 'rooms.csv'));
-writeRooms.write('rID,rMax_guests,rNightly_price,rCleaning_fee,rService_fee,rTaxes_fees,rBulkDiscount,rRequired_Week_Booking_Days,rRating,rReviews\n', 'utf8');
-
-writeTenMillion(writeRooms, 'utf-8', 0, seed.roomRowFormatter, () => {
-  writeRooms.end();
-});
-
-// function writeTenMillionRooms(writer, encoding, callback) {
-//   let i = 100; ///**************************************1000000;
-//   let id = 0;
-//   // let pseudoRandomID = 0
-
-//   function write() {
-//     let ok = true;
-//     do {
-//       i -= 1;
-//       id += 1;
-//       let data = seed.roomRowFormatter(id);
-//       // pseudoRandomID = (pseudoRandomID === 9) ? 0 : pseudoRandomID += 1;
-
-//       if (i === 0) {
-//         writer.write(data, encoding, callback);
-//       } else {
-//     // see if we should continue, or wait
-//     // don't pass the callback, because we're not done yet.
-//        ok = writer.write(data, encoding);
-//       }
-//     } while (i > 0 && ok);
-//       if (i > 0) {
-//       // had to stop early!
-//       // write some more once it drains
-//         writer.once('drain', write);
-//       }
-//     }
-//   write()
-// }
-  
-
-const writeBookings = fs.createWriteStream(path.resolve(__dirname, 'data', 'bookings.csv'));
-writeBookings.write('bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date\n', 'utf8');
 
 function writeTenMillionBookings(writer, encoding, callback) {
   let k = 100; //**************************************10000000;
@@ -127,10 +78,6 @@ function writeTenMillionBookings(writer, encoding, callback) {
             id += 1;
             let stayLength = checkoutMoment.diff(checkinMoment, 'days');
             
-            // for (let l = 0; l <= stayLength; l++) {
-            //   let date = checkinMoment.add(l, 'days').format('YYYY-MM-DD');
-            //   generatedDates.add(date);
-            // }
             let bProperty_ID = rID;
             let bUser_ID = Math.ceil(Math.random() * 100); //************************************** 10000000
             let bGuest_Total = pseudoGuestTotal[pseudoRandomGuestsID];
@@ -161,44 +108,23 @@ function writeTenMillionBookings(writer, encoding, callback) {
   write()
 }
 
+const writeUsers = fs.createWriteStream(path.resolve(__dirname, 'data', 'users.csv'));
+writeUsers.write('userID,username\n', 'utf8');
+
+writeTenMillion(writeUsers, 'utf-8', 0, seed.userRowFormatter, () => {
+  writeUsers.end();
+});
+
+const writeRooms = fs.createWriteStream(path.resolve(__dirname, 'data', 'rooms.csv'));
+writeRooms.write('rID,rMax_guests,rNightly_price,rCleaning_fee,rService_fee,rTaxes_fees,rBulkDiscount,rRequired_Week_Booking_Days,rRating,rReviews\n', 'utf8');
+
+writeTenMillion(writeRooms, 'utf-8', 0, seed.roomRowFormatter, () => {
+  writeRooms.end();
+});
+
+const writeBookings = fs.createWriteStream(path.resolve(__dirname, 'data', 'bookings.csv'));
+writeBookings.write('bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date\n', 'utf8');
+
 writeTenMillionBookings(writeBookings, 'utf-8', () => {
   writeBookings.end();
 });
-
-const gzip = zlib.createGzip();
-
-const usersInp = fs.createReadStream(path.resolve(__dirname, 'data', 'users.csv'));
-const usersOut = fs.createWriteStream(path.resolve(__dirname, 'data', 'users.csv.gz'));
-  
-usersInp.pipe(gzip)
-  .on('error', () => {
-    // handle error
-  })
-  .pipe(usersOut)
-  .on('error', () => {
-    // handle error
-  });
-
-const roomsInp = fs.createReadStream(path.resolve(__dirname, 'data', 'rooms.csv'));
-const roomsOut = fs.createWriteStream(path.resolve(__dirname, 'data', 'rooms.csv.gz'));
-  
-roomsInp.pipe(gzip)
-  .on('error', () => {
-    // handle error
-  })
-  .pipe(roomsOut)
-  .on('error', () => {
-    // handle error
-  });
-
-const bookingsInp = fs.createReadStream(path.resolve(__dirname, 'data', 'bookings.csv'));
-const bookingsOut = fs.createWriteStream(path.resolve(__dirname, 'data', 'bookings.csv.gz'));
-  
-bookingsInp.pipe(gzip)
-  .on('error', () => {
-    // handle error
-  })
-  .pipe(bookingsOut)
-  .on('error', () => {
-    // handle error
-  });
