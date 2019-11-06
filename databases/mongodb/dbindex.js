@@ -1,13 +1,9 @@
 const mongoose = require('mongoose');
-const path = require('path');
-const fs = require('fs');
-const csv = require('fast-csv');
-const Promise = require('bluebird');
-Promise.promisifyAll(mongoose);
-Promise.promisifyAll(fs);
+
+const dbhelpers = require('./dbhelpers.js')
 
 // opens a connection to the stay7omewhere_reservations database
-mongoose.connectAsync('mongodb://localhost/stay7omewhere_reservations', { useNewUrlParser: true })
+mongoose.connect('mongodb://localhost/stay7omewhere_reservations', { useNewUrlParser: true })
 
 // get notification once the connection occurs
 const db = mongoose.connection;
@@ -32,22 +28,30 @@ let usersSchema = mongoose.Schema({
 })
 
 let bookingsSchema = mongoose.Schema({
-    bUser_ID: {
-        type: Number,
-        required: true
-    }, // references userID for each Users document
-    bGuest_Total: {
-        type: Number,
-        required: true
-    },
-    bCheckin_Date: {
-        type: Date,
-        required: true
-    },
-    bCheckout_Date: {
-        type: Date,
-        required: true
-    }
+  bID:{
+    type: Number,
+    required: true
+  },
+  bProperty_ID: {
+    type: Number,
+    required: true
+  },
+  bUser_ID: {
+    type: Number,
+    required: true
+  },
+  bGuest_Total: {
+    type: Number,
+    required: true
+  },
+  bCheckin_Date: {
+    type: Date,
+    required: true
+  },
+  bCheckout_Date: {
+    type: Date,
+    required: true
+  }
 });
 
 let roomsSchema = mongoose.Schema({
@@ -97,122 +101,15 @@ let roomsSchema = mongoose.Schema({
     }
 });
 
-
-let saveCsvDataToModels = function (Model, csvFile, handler, callback) {
-    //Clear the user model on server restart to reset after testing
-    Model.deleteMany({})
-      .then(results => {
-        console.log(`Cleared the model`);
-
-        //create a read stream to the appropriate csv
-        fs.createReadStream(path.resolve(__dirname, '../data', csvFile))
-          .pipe(csv.parse({ headers: true }))
-          .on('data', row => {
-            if (handler) {
-              handler(row, (err) => {
-                if (err) {
-                  console.log(`Error updating model row: `, err)
-                }
-              })
-            } else {
-              Model.create(row, (err) => {
-                if (err) {
-                  console.log(`Error saving model row: `, err)
-                } 
-              });
-            }
-        })
-      })
-      .then(callback)
-      .catch(err => console.log(`Error clearing the model: `, err));
-}
-
-let bulkUpdateSubdocuments = function (Model, csvFile, callback) {
-  let currentRoomID;
-  let currentRoomBookings = [];
-
-  //create a read stream to the appropriate csv
-  fs.createReadStream(path.resolve(__dirname, '../data', csvFile))
-    .pipe(csv.parse({ headers: true }))
-    .on('error', (err) => console.log('Readstream error: ', err))
-    .on('data', row => {
-      let booking = {
-        bUser_ID: row.bUser_ID,
-        bGuest_Total: row.bGuest_Total,
-        bCheckin_Date: row.bCheckin_Date,
-        bCheckout_Date: row.bCheckout_Date
-      }
-      // if the currentRoomID is still undefined or the the bProperty_ID is not the currentRoomID
-      currentRoomID = currentRoomID || row.bProperty_ID
-      // If the row's bProperty_ID no londer matches the currentRoomID
-      //   Find the document with the rID to match the currentRoomId, 
-      //   write all of the currentRoomBookings to the db
-      if (row.bProperty_ID !== currentRoomID) {
-        // console.log(currentRoomID, ' ', currentRoomBookings)
-        let bookings = currentRoomBookings.slice(0);
-        Rooms.findOne({ rID: currentRoomID }, (err, property) => {
-          if (err) {
-            console.log(`Error updating roomListing: `, err)
-          } else {
-            console.log('on data', property)
-            // property.rBookings = bookings;
-            // property.save(() => console.log('saved all bookings for ', currentRoomID));
-          }
-        });
-        currentRoomBookings = [];
-      }
-      currentRoomID = row.bProperty_ID; // save currentRoomID
-      currentRoomBookings.push(booking); // push current booking to currentRoomBookings
-    })
-    .on('end', () => {
-      // console.log(currentRoomID, ' ', currentRoomBookings)
-      Rooms.findOne({ rID: currentRoomID }, (err, property) => {
-        if (err) {
-          console.log(`Error updating roomListing: `, err)
-        } else {
-          console.log('on end', property)
-          // property.rBookings = currentRoomBookings;
-          // property.save(() => console.log('saved all bookings for last property: ', currentRoomID));
-        }
-      });
-    });
-};
-
 // Create User, Rooms, and Bookings models from their schemas
 const User = mongoose.model('User', usersSchema);
 const Rooms = mongoose.model('Rooms', roomsSchema);
 const Bookings = mongoose.model('Bookings', bookingsSchema);
 
-Users.removeAsync({})
-  .then(() => Users.removeAsync({}))
-  .then(() => console.log('cleared models asynchronously'))
-  .catch((err) => console.error(err));
 
-// Create Bookings subdocuments to save in Rooms.rBookings
-// data paramter: the specific {row} from the csv with the bookings shape
-const subDocumentHandler = function(data, callback) {
-  // Get the bookingId
-  let query = {rID: data.bProperty_ID}
-  // Create the update object to push into the Rooms.rBookings array
-  let update = {$push: {
-      rBookings: {
-        bUser_ID: data.bUser_ID,
-        bGuest_Total: data.bGuest_Total,
-        bCheckin_Date: data.bCheckin_Date,
-        bCheckout_Date: data.bCheckout_Date
-      }
-    }
-  }
-  
-  // Find the rooms Model with that query bID and update with bUser_ID, bGuest_Total, bCheckin_Date, bCheckout_Date
-  Rooms.findOneAndUpdate(query, update, callback);
-}
-
-
-saveCsvDataToModels(User, 'users.csv', null,  () => {
-  saveCsvDataToModels(Rooms, 'rooms.csv', null,  () => {
+dbhelpers.saveCsvDataToModels(User, 'users.csv',  () => {
+  dbhelpers.saveCsvDataToModels(Rooms, 'rooms.csv',  () => {
     console.log('saved users and rooms to db')
-    bulkUpdateSubdocuments(Bookings, 'bookings.csv',  () => console.log('saved users and rooms to db.'))
-    // saveCsvDataToModels(Bookings, 'bookings.csv', subDocumentHandler,  () => console.log('saved users and rooms to db.'));
+    dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings.csv',  () => console.log('saved users and rooms to db.'))
   });
 });
