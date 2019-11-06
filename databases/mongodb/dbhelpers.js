@@ -4,11 +4,10 @@ const csv = require('fast-csv');
 
 const dbhelpers = {
   findOneRoomAndUpdate: function(Model, rID, rBookings, callback = () => {}) {
-    Model.findOneAndUpdate({ rID }, { rBookings }, (err) => {       
+    Model.findOneAndUpdate({ rID }, { rBookings }, {useFindAndModify: false}, (err) => {       
       if (err) {
         console.log(`Error updating roomListing: `, err);
       } else {
-        console.log('saved all bookings for ', rID);
         callback();
       }
     }).lean();
@@ -19,7 +18,6 @@ const dbhelpers = {
       if (err) {
         console.log(`Error saving model row: `, err)
       } else {
-        console.log('Return from insert many: ', docs)
         callback();
       }
     });
@@ -48,6 +46,7 @@ const dbhelpers = {
   bulkUpdateBookings: function (Model, Parent, csvFile, callback) {
     let currentRoomID;
     let bookings = [];
+    let bookingIDS = [];
     
     //create a read stream to the appropriate csv
     fs.createReadStream(path.resolve(__dirname, '../data', csvFile))
@@ -61,16 +60,23 @@ const dbhelpers = {
         //   Find the document with the rID to match the currentRoomId, 
         //   write all of the currentRoomBookings to the db
         if (row.bProperty_ID !== currentRoomID) {
-          dbhelpers.findOneRoomAndUpdate(Parent, currentRoomID, bookings)
+          dbhelpers.findOneRoomAndUpdate(Parent, currentRoomID, bookingIDS)
+          bookingIDS = [];
+        }
+        if (bookings.length === 5) {
+          dbhelpers.bulkInsert(Model, bookings)
           bookings = [];
         }
 
         currentRoomID = row.bProperty_ID; // save currentRoomID
-        bookings.push(row); // push current booking to currentRoomBookings
+        bookingIDS.push(row.bID);
+        bookings.push(row); // push current booking to bookings
         
       })
       .on('end', () => { 
-          dbhelpers.findOneRoomAndUpdate(Parent, currentRoomID, bookings, callback) 
+          dbhelpers.findOneRoomAndUpdate(Parent, currentRoomID, bookingIDS, () => {
+            dbhelpers.bulkInsert(Model, bookings, callback)
+          });
       });
   }
 };

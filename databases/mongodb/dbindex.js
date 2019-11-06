@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const dbhelpers = require('./dbhelpers.js')
 
 // opens a connection to the stay7omewhere_reservations database
-mongoose.connect('mongodb://localhost/stay7omewhere_reservations', { useNewUrlParser: true })
+mongoose.connect('mongodb://localhost/stay7omewhere_reservations', { useNewUrlParser: true, useUnifiedTopology: true })
 
 // get notification once the connection occurs
 const db = mongoose.connection;
@@ -96,7 +96,7 @@ let roomsSchema = mongoose.Schema({
         default: 0
     },
     rBookings: {
-        type: [bookingsSchema], // each Bookings doc will be a subdocument of a Rooms doc
+        type: [Number], // each Bookings doc will be a subdocument of a Rooms doc
         default: []
     }
 });
@@ -108,8 +108,9 @@ const Bookings = mongoose.model('Bookings', bookingsSchema);
 
 
 dbhelpers.saveCsvDataToModels(User, 'users.csv',  () => {
+  console.log('saved users to db');
   dbhelpers.saveCsvDataToModels(Rooms, 'rooms.csv',  () => {
-    console.log('saved users and rooms to db')
-    dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings.csv',  () => console.log('saved users and rooms to db.'))
+    console.log('saved rooms to db');
+    dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings.csv',  () => console.log('saved bookings to db.'));
   });
 });
