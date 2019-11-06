@@ -13,7 +13,7 @@ const dbhelpers = {
           callback();
         }
       }
-    });
+    }).lean();
   },
   saveCsvDataToModels: function (Model, csvFile, callback) {
     //Clear the user model on server restart to reset after testing
@@ -67,6 +67,6 @@ const dbhelpers = {
           dbhelpers.findOneRoomAndUpdate(Parent, currentRoomID, currentRoomBookings, callback) 
       });
   }
-}
+};
 
 module.exports = dbhelpers;
