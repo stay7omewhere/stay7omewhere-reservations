@@ -76,13 +76,16 @@ function writeTenMillionBookings(writer, encoding, callback) {
 
           if (seed.verifyDatesInSet(generatedDates, checkinMoment, checkoutMoment)) {
             id += 1;
-            let stayLength = checkoutMoment.diff(checkinMoment, 'days');
             
             let bProperty_ID = rID;
             let bUser_ID = Math.ceil(Math.random() * 100); //************************************** 10000000
             let bGuest_Total = pseudoGuestTotal[pseudoRandomGuestsID];
+            let bCheckin_Date = checkinMoment.format('YYYY-MM-DD');
+            let bCheckout_Date = checkoutMoment.format('YYYY-MM-DD');
+            let bHeldAt = moment().format();
+            let bReserved = false;
             pseudoRandomGuestsID = (pseudoRandomGuestsID === 9) ? 0 : pseudoRandomGuestsID += 1;
-            let data = `${id},${bProperty_ID},${bUser_ID},${bGuest_Total},${checkinMoment.format('YYYY-MM-DD')},${checkoutMoment.format('YYYY-MM-DD')}\n`;
+            let data = `${id},${bProperty_ID},${bUser_ID},${bGuest_Total},${bCheckin_Date},${bCheckout_Date},${bHeldAt},${bReserved}\n`;
             
             if (k === 0) {
               writer.write(data, encoding, callback);
@@ -123,7 +126,7 @@ writeTenMillion(writeRooms, 'utf-8', 0, seed.roomRowFormatter, () => {
 });
 
 const writeBookings = fs.createWriteStream(path.resolve(__dirname, 'data', 'bookings.csv'));
-writeBookings.write('bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date\n', 'utf8');
+writeBookings.write('bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeldAt,bReserved\n', 'utf8');
 
 writeTenMillionBookings(writeBookings, 'utf-8', () => {
   writeBookings.end();
