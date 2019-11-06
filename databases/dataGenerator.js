@@ -5,20 +5,15 @@ const path = require('path');
 const moment = require('moment');
 const seed = require('./seedHelpers.js')
 
-const writeUsers = fs.createWriteStream(path.resolve(__dirname, 'data', 'users.csv'));
-writeUsers.write('userID,username\n', 'utf8');
-
-function writeTenMillionUsers(writer, encoding, callback) {
+function writeTenMillion(writer, encoding, startId, dataFormatter, callback) {
   let i = 100; //************************************** 10000000;
-  let id = 0;
+  let id = startId;
   function write() {
     let ok = true;
     do {
       i -= 1;
       id += 1;
-      // const username = faker.internet.userName();
-      // const data = `${id},${username}\n`;
-      const data = seed.userRowFormatter(id)
+      const data = dataFormatter(id)
       if (i === 0) {
         writer.write(data, encoding, callback);
       } else {
@@ -36,47 +31,50 @@ function writeTenMillionUsers(writer, encoding, callback) {
   write()
 }
 
-writeTenMillionUsers(writeUsers, 'utf-8', () => {
+const writeUsers = fs.createWriteStream(path.resolve(__dirname, 'data', 'users.csv'));
+writeUsers.write('userID,username\n', 'utf8');
+
+writeTenMillion(writeUsers, 'utf-8', 0, seed.userRowFormatter, () => {
   writeUsers.end();
 });
 
 const writeRooms = fs.createWriteStream(path.resolve(__dirname, 'data', 'rooms.csv'));
 writeRooms.write('rID,rMax_guests,rNightly_price,rCleaning_fee,rService_fee,rTaxes_fees,rBulkDiscount,rRequired_Week_Booking_Days,rRating,rReviews\n', 'utf8');
 
-function writeTenMillionRooms(writer, encoding, callback) {
-  let i = 100; ///**************************************1000000;
-  let id = 0;
-  // let pseudoRandomID = 0
-
-  function write() {
-    let ok = true;
-    do {
-      i -= 1;
-      id += 1;
-
-      let data = seed.roomRowFormatter(id);
-      // pseudoRandomID = (pseudoRandomID === 9) ? 0 : pseudoRandomID += 1;
-
-      if (i === 0) {
-        writer.write(data, encoding, callback);
-      } else {
-    // see if we should continue, or wait
-    // don't pass the callback, because we're not done yet.
-       ok = writer.write(data, encoding);
-      }
-    } while (i > 0 && ok);
-      if (i > 0) {
-      // had to stop early!
-      // write some more once it drains
-        writer.once('drain', write);
-      }
-    }
-  write()
-}
-  
-writeTenMillionRooms(writeRooms, 'utf-8', () => {
+writeTenMillion(writeRooms, 'utf-8', 0, seed.roomRowFormatter, () => {
   writeRooms.end();
 });
+
+// function writeTenMillionRooms(writer, encoding, callback) {
+//   let i = 100; ///**************************************1000000;
+//   let id = 0;
+//   // let pseudoRandomID = 0
+
+//   function write() {
+//     let ok = true;
+//     do {
+//       i -= 1;
+//       id += 1;
+//       let data = seed.roomRowFormatter(id);
+//       // pseudoRandomID = (pseudoRandomID === 9) ? 0 : pseudoRandomID += 1;
+
+//       if (i === 0) {
+//         writer.write(data, encoding, callback);
+//       } else {
+//     // see if we should continue, or wait
+//     // don't pass the callback, because we're not done yet.
+//        ok = writer.write(data, encoding);
+//       }
+//     } while (i > 0 && ok);
+//       if (i > 0) {
+//       // had to stop early!
+//       // write some more once it drains
+//         writer.once('drain', write);
+//       }
+//     }
+//   write()
+// }
+  
 
 const writeBookings = fs.createWriteStream(path.resolve(__dirname, 'data', 'bookings.csv'));
 writeBookings.write('bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date\n', 'utf8');

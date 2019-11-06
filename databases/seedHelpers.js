@@ -19,18 +19,18 @@ const seedHelpers = {
       Review: [15, 63, 71, 89, 157, 186, 203, 879, 1017, 5203]
     };
 
-    const rMax_guests = pseudos.MaxGuests[seedHelpers.pseudoRandomID];
-    const rNightly_price = pseudos.NightlyPrice[seedHelpers.pseudoRandomID];
-    const rCleaning_fee = pseudos.CleaningFee[seedHelpers.pseudoRandomID]; 
+    const rMax_guests = pseudos.MaxGuests[seedHelpers.psuedoRandomRoomInfoID];
+    const rNightly_price = pseudos.NightlyPrice[seedHelpers.psuedoRandomRoomInfoID];
+    const rCleaning_fee = pseudos.CleaningFee[seedHelpers.psuedoRandomRoomInfoID]; 
     const rService_fee = 0.13;  //13% pNightly_price + pCleaning_Fee
-    const rTaxes_fees = pseudos.TaxesFees[seedHelpers.pseudoRandomID];
-    const rBulkDiscount = pseudos.BulkDiscount[seedHelpers.pseudoRandomID];
-    const rRequired_Week_Booking_Days = pseudos.RequiredDays[seedHelpers.pseudoRandomID]; 
-    const rRating = pseudos.Rating[seedHelpers.pseudoRandomID];
-    const rReviews = pseudos.Review[seedHelpers.pseudoRandomID];
+    const rTaxes_fees = pseudos.TaxesFees[seedHelpers.psuedoRandomRoomInfoID];
+    const rBulkDiscount = pseudos.BulkDiscount[seedHelpers.psuedoRandomRoomInfoID];
+    const rRequired_Week_Booking_Days = pseudos.RequiredDays[seedHelpers.psuedoRandomRoomInfoID]; 
+    const rRating = pseudos.Rating[seedHelpers.psuedoRandomRoomInfoID];
+    const rReviews = pseudos.Review[seedHelpers.psuedoRandomRoomInfoID];
       
     const data = `${id},${rMax_guests},${rNightly_price},${rCleaning_fee},${rService_fee},${rTaxes_fees},${rBulkDiscount},${rRequired_Week_Booking_Days},${rRating},${rReviews}\n`;
-    seedHelpers.pseudoRandomID = (seedHelpers.pseudoRandomID === 9) ? 0 : seedHelpers.pseudoRandomID += 1;
+    seedHelpers.psuedoRandomRoomInfoID = (seedHelpers.psuedoRandomRoomInfoID === 9) ? 0 : seedHelpers.psuedoRandomRoomInfoID += 1;
     return data;
   },
   verifyDatesInSet: function(set, checkinMoment, checkoutMoment) {
