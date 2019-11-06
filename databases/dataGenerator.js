@@ -9,15 +9,16 @@ const writeUsers = fs.createWriteStream(path.resolve(__dirname, 'data', 'users.c
 writeUsers.write('userID,username\n', 'utf8');
 
 function writeTenMillionUsers(writer, encoding, callback) {
-  let i = 10; //10000000;
+  let i = 100; //************************************** 10000000;
   let id = 0;
   function write() {
     let ok = true;
     do {
       i -= 1;
       id += 1;
-      const username = faker.internet.userName();
-      const data = `${id},${username}\n`;
+      // const username = faker.internet.userName();
+      // const data = `${id},${username}\n`;
+      const data = seed.userRowFormatter(id)
       if (i === 0) {
         writer.write(data, encoding, callback);
       } else {
@@ -43,18 +44,9 @@ const writeRooms = fs.createWriteStream(path.resolve(__dirname, 'data', 'rooms.c
 writeRooms.write('rID,rMax_guests,rNightly_price,rCleaning_fee,rService_fee,rTaxes_fees,rBulkDiscount,rRequired_Week_Booking_Days,rRating,rReviews\n', 'utf8');
 
 function writeTenMillionRooms(writer, encoding, callback) {
-  let i = 10; //1000000;
+  let i = 100; ///**************************************1000000;
   let id = 0;
-  let pseudoRandomID = 0
-
-  const pseduoMaxGuests = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
-  const pseduoNightlyPrice = [89, 100, 105, 150, 189, 205, 235, 289, 300, 325];
-  const pseduoCleaningFee = [35, 45, 55, 65, 75, 81, 40, 80, 59, 49];
-  const pseudoTaxesFees = [null, 3, null, 5, null, null, null, null, 8, 10];
-  const pseudoBulkDiscount = [0.05, null, null, null, 0.05, null, null, null, 0.05, null];
-  const pseudoRequiredDays = [3, 3, 3, 4, 4, 5, 5, 6, 7, 3];
-  const pseudoRating = [2.7, 3.5, 3.6, 3.7, 4.1, 4.5, 4.6, 4.7, 4.8, 4.9];
-  const pseudoReview = [15, 63, 71, 89, 157, 186, 203, 879, 1017, 5203];
+  // let pseudoRandomID = 0
 
   function write() {
     let ok = true;
@@ -62,18 +54,8 @@ function writeTenMillionRooms(writer, encoding, callback) {
       i -= 1;
       id += 1;
 
-      let rMax_guests = pseduoMaxGuests[pseudoRandomID];
-      let rNightly_price = pseduoNightlyPrice[pseudoRandomID];
-      let rCleaning_fee = pseduoCleaningFee[pseudoRandomID]; 
-      let rService_fee = 0.13;  //13% pNightly_price + pCleaning_Fee
-      let rTaxes_fees = pseudoTaxesFees[pseudoRandomID];
-      let rBulkDiscount = pseudoBulkDiscount[pseudoRandomID];
-      let rRequired_Week_Booking_Days = pseudoRequiredDays[pseudoRandomID]; 
-      let rRating = pseudoRating[pseudoRandomID];
-      let rReviews = pseudoReview[pseudoRandomID];
-      
-      let data = `${id},${rMax_guests},${rNightly_price},${rCleaning_fee},${rService_fee},${rTaxes_fees},${rBulkDiscount},${rRequired_Week_Booking_Days},${rRating},${rReviews}\n`;
-      pseudoRandomID = (pseudoRandomID === 9) ? 0 : pseudoRandomID += 1;
+      let data = seed.roomRowFormatter(id);
+      // pseudoRandomID = (pseudoRandomID === 9) ? 0 : pseudoRandomID += 1;
 
       if (i === 0) {
         writer.write(data, encoding, callback);
@@ -100,7 +82,7 @@ const writeBookings = fs.createWriteStream(path.resolve(__dirname, 'data', 'book
 writeBookings.write('bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date\n', 'utf8');
 
 function writeTenMillionBookings(writer, encoding, callback) {
-  let k = 10; //10000000;
+  let k = 100; //**************************************10000000;
   let rID = 0;
   let id = 0;
   let pseudoRandomBookingsID = 0;
@@ -117,7 +99,8 @@ function writeTenMillionBookings(writer, encoding, callback) {
     do {
       k -= 1;
       rID += 1;
-      let startDate = moment().format(); // Gets the current date and time YYYY-MM-DDT##:##:-##:##
+        let startMoment = moment()
+        let startDate = startMoment.format(); // Gets the current date and time YYYY-MM-DDT##:##:-##:##
         let endMoment = moment().endOf('month');
         let endDate = endMoment.format(); // Gets last day of the month in form ^
 
@@ -132,28 +115,29 @@ function writeTenMillionBookings(writer, encoding, callback) {
           let checkinMoment = moment(faker.date.between(startDate, endDate)); //.format('YYYY-MM-DD');
           let randomStay = pseudoStay[pseudoRandomStayID];
           pseudoRandomStayID = (pseudoRandomStayID === 9) ? 0 : pseudoRandomStayID += 1;
-          let checkin = checkinMoment.format('YYYY-MM-DD');
-          let checkoutMoment = checkinMoment.add(randomStay, 'days')//.format('YYYY-MM-DD');
+          let checkoutMoment = moment(checkinMoment).add(randomStay, 'days')//.format('YYYY-MM-DD');
 
-          if (moment.max(checkoutMoment, endMoment) === checkinMoment) {
-              checkoutMoment = endMoment;
-            }
-            
-          let checkout = checkoutMoment.format('YYYY-MM-DD');
+          if (moment.max(checkoutMoment, endMoment) === checkoutMoment) {
+            checkoutMoment = endMoment;
+            randomStay = checkinMoment.diff(checkoutMoment, 'days')
+          } 
+          if (randomStay < 2 && startMoment.isBefore(checkinMoment)) {
+            checkinMoment.subtract(1, 'days'); // handles stays that are too short
+          }
 
-        if ( !( generatedDates.has(checkin) || generatedDates.has(checkout) ) ) {
+          if (seed.verifyDatesInSet(generatedDates, checkinMoment, checkoutMoment)) {
             id += 1;
             let stayLength = checkoutMoment.diff(checkinMoment, 'days');
             
-            for (let l = 0; l <= stayLength; l++) {
-              let date = checkinMoment.add(l, 'days').format('YYYY-MM-DD');
-              generatedDates.add(date);
-            }
+            // for (let l = 0; l <= stayLength; l++) {
+            //   let date = checkinMoment.add(l, 'days').format('YYYY-MM-DD');
+            //   generatedDates.add(date);
+            // }
             let bProperty_ID = rID;
-            let bUser_ID = Math.ceil(Math.random() * 10); //10000000
+            let bUser_ID = Math.ceil(Math.random() * 100); //************************************** 10000000
             let bGuest_Total = pseudoGuestTotal[pseudoRandomGuestsID];
             pseudoRandomGuestsID = (pseudoRandomGuestsID === 9) ? 0 : pseudoRandomGuestsID += 1;
-            let data = `${id},${bProperty_ID},${bUser_ID},${bGuest_Total},${checkin},${checkout}\n`;
+            let data = `${id},${bProperty_ID},${bUser_ID},${bGuest_Total},${checkinMoment.format('YYYY-MM-DD')},${checkoutMoment.format('YYYY-MM-DD')}\n`;
             
             if (k === 0) {
               writer.write(data, encoding, callback);
@@ -164,8 +148,9 @@ function writeTenMillionBookings(writer, encoding, callback) {
             }
           }
         }
-        startDate = moment().startOf('month').add(i + 1, 'months').format();
-        endMoment = moment().endOf('month').add(i + 1, 'months')
+        startMoment = moment().startOf('month').add(i + 1, 'months');
+        startDate = startMoment.format();
+        endMoment = moment().endOf('month').add(i + 1, 'months');
         endDate = endMoment.format();
       }
     } while (k > 0 && ok);

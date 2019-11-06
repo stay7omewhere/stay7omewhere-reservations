@@ -29,8 +29,8 @@ CREATE TABLE rooms (
 
 CREATE TABLE bookings (
   bID             SERIAL,
-  bProperty_ID    INTEGER     REFERENCES rooms(rID),
-  bUser_ID        INTEGER     REFERENCES users(userID),
+  bProperty_ID    INTEGER,     -- REFERENCES rooms(rID),
+  bUser_ID        INTEGER,     -- REFERENCES users(userID),
   bGuest_Total    SMALLINT    NOT NULL,
   bCheckin_Date   DATE        NOT NULL,
   bCheckout_Date  DATE        NOT NULL,

@@ -32,7 +32,7 @@ const dbhelpers = {
         fs.createReadStream(path.resolve(__dirname, '../data', csvFile))
           .pipe(csv.parse({ headers: true }))
           .on('data', row => {
-            if (records.length === 5) {
+            if (records.length === 5) { // ***********************************change to 1000
               dbhelpers.bulkInsert(Model, records)
               records = [];
             }
@@ -63,7 +63,7 @@ const dbhelpers = {
           dbhelpers.findOneRoomAndUpdate(Parent, currentRoomID, bookingIDS)
           bookingIDS = [];
         }
-        if (bookings.length === 5) {
+        if (bookings.length === 5) { // ***********************************change to 1000
           dbhelpers.bulkInsert(Model, bookings)
           bookings = [];
         }
