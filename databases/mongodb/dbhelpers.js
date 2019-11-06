@@ -3,45 +3,51 @@ const fs = require('fs');
 const csv = require('fast-csv');
 
 const dbhelpers = {
-  findOneRoomAndUpdate: function(Model, rID, rBookings, callback) {
+  findOneRoomAndUpdate: function(Model, rID, rBookings, callback = () => {}) {
     Model.findOneAndUpdate({ rID }, { rBookings }, (err) => {       
       if (err) {
         console.log(`Error updating roomListing: `, err);
       } else {
         console.log('saved all bookings for ', rID);
-        if (callback) {
-          callback();
-        }
+        callback();
       }
     }).lean();
   },
+
+  bulkInsert: function(Model, records, callback = () => {}) {
+    Model.insertMany(records, (err, docs) => {
+      if (err) {
+        console.log(`Error saving model row: `, err)
+      } else {
+        console.log('Return from insert many: ', docs)
+        callback();
+      }
+    });
+  },
+
   saveCsvDataToModels: function (Model, csvFile, callback) {
+    let records = [];
     //Clear the user model on server restart to reset after testing
     Model.deleteMany({})
       .then(() => {
         //create a read stream to the appropriate csv
         fs.createReadStream(path.resolve(__dirname, '../data', csvFile))
-
           .pipe(csv.parse({ headers: true }))
           .on('data', row => {
-
-            Model.create(row, (err) => {
-              if (err) {
-                console.log(`Error saving model row: `, err)
-              } 
-            });
-
+            if (records.length === 5) {
+              dbhelpers.bulkInsert(Model, records)
+              records = [];
+            }
+            records.push(row);
           })
-          .on('end', callback)
-
+          .on('end', () => { dbhelpers.bulkInsert(Model, records, callback) })
       })
-
       .catch(err => console.log(`Error clearing the model: `, err));
-
   },
+
   bulkUpdateBookings: function (Model, Parent, csvFile, callback) {
     let currentRoomID;
-    let currentRoomBookings = [];
+    let bookings = [];
     
     //create a read stream to the appropriate csv
     fs.createReadStream(path.resolve(__dirname, '../data', csvFile))
@@ -55,16 +61,16 @@ const dbhelpers = {
         //   Find the document with the rID to match the currentRoomId, 
         //   write all of the currentRoomBookings to the db
         if (row.bProperty_ID !== currentRoomID) {
-          dbhelpers.findOneRoomAndUpdate(Parent, currentRoomID, currentRoomBookings)
-          currentRoomBookings = [];
+          dbhelpers.findOneRoomAndUpdate(Parent, currentRoomID, bookings)
+          bookings = [];
         }
 
         currentRoomID = row.bProperty_ID; // save currentRoomID
-        currentRoomBookings.push(row); // push current booking to currentRoomBookings
+        bookings.push(row); // push current booking to currentRoomBookings
         
       })
       .on('end', () => { 
-          dbhelpers.findOneRoomAndUpdate(Parent, currentRoomID, currentRoomBookings, callback) 
+          dbhelpers.findOneRoomAndUpdate(Parent, currentRoomID, bookings, callback) 
       });
   }
 };
