@@ -4,7 +4,7 @@ const path = require('path');
 const moment = require('moment');
 const seed = require('./seedHelpers.js')
 
-let total = 100; //************************************** 10000000;
+let total = 10000000; //************************************** 10000000;
 bID = 0;
 rID = 0;
 
@@ -22,7 +22,7 @@ function writeTenMillion(writer, encoding, total, dataFormatter, callback) {
 
       if (i === (1/5)*total || i === (2/5)*total || i === (3/5)*total || i === (4/5)*total) {
         let now = moment();
-        console.log(`at i = ${i}: ${now.diff(start, 'minutes')} minutes`);
+        console.log(`at i = ${i}: ${now.diff(start, 'seconds')} seconds`);
       }
       
       const data = dataFormatter(id)
@@ -95,7 +95,7 @@ function writeTenMillionBookings(writer, encoding, subTotal, callback) {
             bID += 1;
             
             let bProperty_ID = rID;
-            let bUser_ID = Math.ceil(Math.random() * total); //************************************** 10000000
+            let bUser_ID = faker.random.number({min: 1, max: total}); //************************************** 10000000
             let bGuest_Total = pseudoGuestTotal[pseudoRandomGuestsID];
             let bCheckin_Date = checkinMoment.format('YYYY-MM-DD');
             let bCheckout_Date = checkoutMoment.format('YYYY-MM-DD');
@@ -147,7 +147,7 @@ writeUsers.write('userID,username\n', 'utf8');
 writeTenMillion(writeUsers, 'utf-8', total, seed.userRowFormatter, () => {
   writeUsers.end();
   let now = moment();
-  console.log('users ended: ', now.diff(start, 'minutes'), ' minutes');
+  console.log('users ended: ', now.diff(start, 'seconds'), ' seconds');
 
   const writeRooms = fs.createWriteStream(path.resolve(__dirname, 'data', 'rooms.csv'));
   writeRooms.write('rID,rMax_guests,rNightly_price,rCleaning_fee,rService_fee,rTaxes_fees,rBulkDiscount,rRequired_Week_Booking_Days,rRating,rReviews\n', 'utf8');
@@ -155,7 +155,7 @@ writeTenMillion(writeUsers, 'utf-8', total, seed.userRowFormatter, () => {
   writeTenMillion(writeRooms, 'utf-8', total, seed.roomRowFormatter, () => {
     writeRooms.end();
     let now = moment();
-    console.log('rooms ended: ', now.diff(start, 'minutes'), ' minutes');
+    console.log('rooms ended: ', now.diff(start, 'seconds'), ' seconds');
 
     writeBookingsChunk(`bookings1.csv`, () => {
       writeBookingsChunk(`bookings2.csv`, () => {

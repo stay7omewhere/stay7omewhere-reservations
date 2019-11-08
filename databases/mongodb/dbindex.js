@@ -113,11 +113,11 @@ const User = mongoose.model('User', usersSchema);
 const Rooms = mongoose.model('Rooms', roomsSchema);
 const Bookings = mongoose.model('Bookings', bookingsSchema);
 
-// //Clear the user model on server restart to reset after testing
-// User.deleteMany({})
-//   .then(Rooms.deleteMany({}))
-//   .then(Bookings.deleteMany({}))
-//   .then(() => {
+//Clear the user model on server restart to reset after testing
+User.deleteMany({})
+  .then(Rooms.deleteMany({}))
+  .then(Bookings.deleteMany({}))
+  .then(() => {
     dbhelpers.saveCsvDataToModels(User, 'users.csv',  () => {
       console.log('saved users to db');
       dbhelpers.saveCsvDataToModels(Rooms, 'rooms.csv',  () => {
@@ -126,19 +126,19 @@ const Bookings = mongoose.model('Bookings', bookingsSchema);
           console.log('saved bookings1 to db.');
           dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings2.csv',  () => {
             console.log('saved bookings2 to db.');
-            dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings3.csv',  () => {
-              console.log('saved bookings3 to db.');
-              dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings4.csv',  () => {
-                console.log('saved bookings4 to db.');
-                dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings5.csv',  () => {
-                  console.log('saved bookings5 to db.')
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-  // })
-  // .catch(err => console.log(`Error clearing the model: `, err));
+  //         //   dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings3.csv',  () => {
+  //         //     console.log('saved bookings3 to db.');
+  //         //     dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings4.csv',  () => {
+  //         //       console.log('saved bookings4 to db.');
+  //         //       dbhelpers.bulkUpdateBookings(Bookings, Rooms, 'bookings5.csv',  () => {
+  //         //         console.log('saved bookings5 to db.')
+  //         //       });
+  //         //     });
+  //         //   });
+  //         });
+  //       // });
+  //     // });
+  //   // });
+  // // })
+  // // .catch(err => console.log(`Error clearing the model: `, err));
 

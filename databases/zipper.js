@@ -19,4 +19,8 @@ const zipper = function(inpPath, outPath) {
 
 zipper('users.csv', 'users.csv.gz');
 zipper('rooms.csv', 'rooms.csv.gz');
-zipper('bookings.csv', 'bookings.csv.gz');
+zipper('bookings1.csv', 'bookings1.csv.gz');
+zipper('bookings2.csv', 'bookings2.csv.gz');
+zipper('bookings3.csv', 'bookings3.csv.gz');
+zipper('bookings4.csv', 'bookings4.csv.gz');
+zipper('bookings5.csv', 'bookings5.csv.gz');

@@ -7,8 +7,8 @@ CREATE TABLE users (
   userID        SERIAL,
   username      VARCHAR,
 
-  PRIMARY KEY   (userID),
-  UNIQUE        (username)
+  PRIMARY KEY   (userID)
+  -- UNIQUE        (username)
 );
 -- SERIAL: autoincrementing to billions
 
@@ -40,13 +40,13 @@ CREATE TABLE bookings (
   PRIMARY KEY (bID)
 );
 
--- COPY users (userID, username)
---     FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/users.csv' 
---     WITH DELIMITER ',' CSV HEADER;
+COPY users (userID, username)
+    FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/users.csv' 
+    WITH DELIMITER ',' CSV HEADER;
 
--- COPY rooms (rID, rMax_guests, rNightly_price, rCleaning_fee, rService_fee, rTaxes_fees, rBulkDiscount, rRequired_Week_Booking_Days, rRating, rReviews)
---     FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/rooms.csv' 
---     WITH DELIMITER ',' CSV HEADER NULL 'null';
+COPY rooms (rID, rMax_guests, rNightly_price, rCleaning_fee, rService_fee, rTaxes_fees, rBulkDiscount, rRequired_Week_Booking_Days, rRating, rReviews)
+    FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/rooms.csv' 
+    WITH DELIMITER ',' CSV HEADER NULL 'null';
 
 COPY bookings (bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
     FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/bookings1.csv' 

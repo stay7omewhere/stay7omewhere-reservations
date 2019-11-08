@@ -2,8 +2,16 @@ node_modules/
 server/config/sqlConfig.js
 sqlConfig.env
 
-databases/data/bookings.csv
-databases/data/bookings.csv.gz
+databases/data/bookings1.csv
+databases/data/bookings1.csv.gz
+databases/data/bookings2.csv
+databases/data/bookings2.csv.gz
+databases/data/bookings3.csv
+databases/data/bookings3.csv.gz
+databases/data/bookings4.csv
+databases/data/bookings4.csv.gz
+databases/data/bookings5.csv
+databases/data/bookings5.csv.gz
 databases/data/rooms.csv
 databases/data/rooms.csv.gz
 databases/data/users.csv
