@@ -5,6 +5,7 @@ CREATE DATABASE stay7omewhere_reservations;
 
 CREATE TABLE users (
   userID        SERIAL,
+  csvID         SERIAL,
   username      VARCHAR,
 
   PRIMARY KEY   (userID)
@@ -14,6 +15,7 @@ CREATE TABLE users (
 
 CREATE TABLE rooms (
   rID                         SERIAL,
+  csvID                       INTEGER,
   rMax_guests                 SMALLINT      NOT NULL  DEFAULT 2,
   rNightly_price              MONEY         NOT NULL  DEFAULT 75,
   rCleaning_fee               MONEY         NOT NULL  DEFAULT 15,
@@ -27,8 +29,9 @@ CREATE TABLE rooms (
   PRIMARY KEY (rID)
 );
 
-CREATE TABLE bookings (
+CREATE TABLE bookings (   
   bID             SERIAL,
+  csvID           INTEGER,
   bProperty_ID    INTEGER,     -- REFERENCES rooms(rID),
   bUser_ID        INTEGER,     -- REFERENCES users(userID),
   bGuest_Total    SMALLINT    NOT NULL,
@@ -40,36 +43,31 @@ CREATE TABLE bookings (
   PRIMARY KEY (bID)
 );
 
-ALTER TABLE bookings
-ADD CONSTRAINT constraint_name FOREIGN KEY (c1) REFERENCES parent_table (p1);
 
-ALTER TABLE bookings ADD CONSTRAINT bpropfk FOREIGN KEY (bProperty_ID) REFERENCES rooms (rID);
-ALTER TABLE bookings ADD CONSTRAINT buserfk FOREIGN KEY (bUser_ID) REFERENCES users (userID);
-
-COPY users (userID, username)
+COPY users (csvID, username)
     FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/users.csv' 
     WITH DELIMITER ',' CSV HEADER;
 
-COPY rooms (rID, rMax_guests, rNightly_price, rCleaning_fee, rService_fee, rTaxes_fees, rBulkDiscount, rRequired_Week_Booking_Days, rRating, rReviews)
+COPY rooms (csvID, rMax_guests, rNightly_price, rCleaning_fee, rService_fee, rTaxes_fees, rBulkDiscount, rRequired_Week_Booking_Days, rRating, rReviews)
     FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/rooms.csv' 
     WITH DELIMITER ',' CSV HEADER NULL 'null';
 
-COPY bookings (bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
+COPY bookings (csvID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
     FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/bookings1.csv' 
     WITH DELIMITER ',' CSV HEADER;
 
-COPY bookings (bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
+COPY bookings (csvID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
     FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/bookings2.csv' 
     WITH DELIMITER ',' CSV HEADER;
 
-COPY bookings (bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
+COPY bookings (csvID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
     FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/bookings3.csv' 
     WITH DELIMITER ',' CSV HEADER;
 
-COPY bookings (bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
+COPY bookings (csvID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
     FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/bookings4.csv' 
     WITH DELIMITER ',' CSV HEADER;
 
-COPY bookings (bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
+COPY bookings (csvID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
     FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/bookings5.csv' 
     WITH DELIMITER ',' CSV HEADER;
