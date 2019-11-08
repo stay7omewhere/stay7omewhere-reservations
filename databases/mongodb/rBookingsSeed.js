@@ -12,16 +12,29 @@ const findBookings = (bProperty_ID, callback) => {
         let bookingIDs = docs.map((doc) => {
           return doc['_id'];
         });
-        let end = new Date();
-        // console.log(`booking_ids for${bProperty_ID}: `, bookingIDs);   
-        console.log('Time to end: ', end - start);
+        // console.log(`booking_ids for${bProperty_ID}: `, bookingIDs);  
+        callback()
       }
     }
   });
 };
 
+const timerCallback = () {
+  let end = new Date(); 
+  console.log('Time to end: ', end - start);
+}
+
+const updateRbookings = (rID, rBookings, callback) => {
+  models.Rooms.findOneAndUdate({rID}, {rBookings}, (err, docs) => {
+    if (err) {
+      console.log(`error finding the documents for${rID}: `, err)
+    } else {
+      
+    }
+  }).lean()
+}
 //const updateRooms(rID, )
 //findBookings(1);
-for (var i = 1; i <= 1000; i++) {
- findBookings(i);   
-}
+
+findBookings(i);   
+

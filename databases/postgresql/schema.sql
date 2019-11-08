@@ -40,6 +40,12 @@ CREATE TABLE bookings (
   PRIMARY KEY (bID)
 );
 
+ALTER TABLE bookings
+ADD CONSTRAINT constraint_name FOREIGN KEY (c1) REFERENCES parent_table (p1);
+
+ALTER TABLE bookings ADD CONSTRAINT bpropfk FOREIGN KEY (bProperty_ID) REFERENCES rooms (rID);
+ALTER TABLE bookings ADD CONSTRAINT buserfk FOREIGN KEY (bUser_ID) REFERENCES users (userID);
+
 COPY users (userID, username)
     FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/users.csv' 
     WITH DELIMITER ',' CSV HEADER;
