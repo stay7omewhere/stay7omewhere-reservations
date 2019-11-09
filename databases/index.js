@@ -15,7 +15,6 @@ const getListing = (id, callback) => {
   pool
     .query(text, values)
     .then(res => {
-      console.log(res.rows[0]);
       callback(res.rows[0]);
     })
     .catch(e => console.error(e.stack));
