@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const db = require('./data/db.js');
+const db = require('../databases/index.js');
 const compression = require('compression')
 
 app.use(function(req, res, next) {
@@ -31,12 +31,8 @@ app.use('/rooms/:id', express.static(path.join(__dirname, '../public')));
 // [{pID, pMax_guests, pNightly_price, pCleaning_fee, pService_fee, pTaxes_fees, pBulkDiscount, pRequired_Week_Booking_Days, pRating, pReviews}]
 app.get('/api/rooms/:id', (req, res, next) => {
   let rID = req.params.id;
-  db.Rooms.findAll( {
-    where: {
-      rID
-    }
-  }).then(property => {
-    res.send(property);
+  db.getListing(rID, (listing) => {
+    res.send(listing);
     next();
   });
 });

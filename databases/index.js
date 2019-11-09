@@ -8,16 +8,21 @@ const pool = new Pool({
   port: 5432,
 })
 
-const getListing = (id) => {
+const getListing = (id, callback) => {
   const text = 'select * from rooms where rID = $1';
   const values = [id];
 
   pool
     .query(text, values)
     .then(res => {
-        console.log(res.rows[0])
+      console.log(res.rows[0]);
+      callback(res.rows[0]);
     })
     .catch(e => console.error(e.stack));
 }
 
-getListing(9990900);
+module.exports = {
+  getListing
+}
+
+// getListing(9990900);
