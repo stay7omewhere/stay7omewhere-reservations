@@ -20,6 +20,18 @@ const getListing = (id, callback) => {
     .catch(e => console.error(e.stack));
 }
 
+const getBookings = (id, callback) => {
+    const text = 'select * from bookings where bProperty_ID = $1';
+    const values = [id];
+  
+    pool
+      .query(text, values)
+      .then(res => {
+        callback(res.rows[0]);
+      })
+      .catch(e => console.error(e.stack));
+  }
+
 module.exports = {
   getListing
 }
