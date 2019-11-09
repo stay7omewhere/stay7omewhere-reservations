@@ -60,20 +60,18 @@ class Calendar extends React.Component {
       console.log('Get BookedDates for Calendar res.data: ', res.data)
       let bookedDates = [];
       for (let i = 0; i < res.data.length; i++) {
-        let date = moment(res.data[i].bCheckin_Date);
-        let bCheckout =  moment(res.data[i].bCheckout_Date);
+        let date = moment(res.data[i].bcheckin_date);
+        let bCheckout =  moment(res.data[i].bcheckout_date);
         // While the current date is between the checkin and checkout
-        console.log()
         while (bCheckout.diff(date, 'days') >= 0){
           console.log(`booking for i = ${i}: `, date.format())
-          bookedDates.push(date)
+          console.log('booking month: ', date.month())
+          bookedDates.push(date);
           // After pushing the date to the list, increase the date by 1
-          date = moment(date.add(1, 'days').format())
+         date = date.add(1, 'days');
         }
       }
-      // for (let i = 0; i < res.data.length; i++) {
-      //   bookedDates.push(moment(res.data[i].Date))
-      // }
+      
       this.setState({
         bookedDates
       }, () => this.updateCurrentMonth());
@@ -100,7 +98,7 @@ class Calendar extends React.Component {
 
   calculateBookedDates(dayArray) {
     let currentMonthBookedDates = this.state.bookedDates.filter(
-                                  monthDates => (monthDates.month() === this.state.currentMonth.month()) && (monthDates.year() === this.state.currentMonth.year()));
+      monthDates => (monthDates.month() === this.state.currentMonth.month()) && (monthDates.year() === this.state.currentMonth.year()));
     for (let i = 0; i < currentMonthBookedDates.length; i++) {
       dayArray[this.calculateIndexOfDay(Number(currentMonthBookedDates[i].format('DD')))].invalidDate = true;
     }
