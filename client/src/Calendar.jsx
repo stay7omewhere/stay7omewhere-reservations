@@ -64,14 +64,11 @@ class Calendar extends React.Component {
         let bCheckout =  moment(res.data[i].bcheckout_date);
         // While the current date is between the checkin and checkout
         while (bCheckout.diff(date, 'days') >= 0){
-          console.log(`booking for i = ${i}: `, date.format())
-          console.log('booking month: ', date.month())
-          bookedDates.push(date);
+          bookedDates.push(moment(date.format()));
           // After pushing the date to the list, increase the date by 1
          date = date.add(1, 'days');
         }
       }
-      
       this.setState({
         bookedDates
       }, () => this.updateCurrentMonth());
