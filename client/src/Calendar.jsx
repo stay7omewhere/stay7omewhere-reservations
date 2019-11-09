@@ -61,9 +61,11 @@ class Calendar extends React.Component {
       let bookedDates = [];
       for (let i = 0; i < res.data.length; i++) {
         let date = moment(res.data[i].bCheckin_Date);
-        let bCheckout =  res.data[i].bCheckout_Date;
+        let bCheckout =  moment(res.data[i].bCheckout_Date);
         // While the current date is between the checkin and checkout
-        while (date.format() <= bCheckout){
+        console.log()
+        while (bCheckout.diff(date, 'days') >= 0){
+          console.log(`booking for i = ${i}: `, date.format())
           bookedDates.push(date)
           // After pushing the date to the list, increase the date by 1
           date = moment(date.add(1, 'days').format())
