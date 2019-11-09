@@ -27,13 +27,14 @@ const getBookings = (id, callback) => {
     pool
       .query(text, values)
       .then(res => {
-        callback(res.rows[0]);
+        callback(res.rows);
       })
       .catch(e => console.error(e.stack));
   }
 
 module.exports = {
-  getListing
+  getListing,
+  getBookings
 }
 
 // getListing(9990900);

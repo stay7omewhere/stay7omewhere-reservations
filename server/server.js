@@ -39,15 +39,10 @@ app.get('/api/rooms/:id', (req, res, next) => {
 
 // GET '/api/rooms/:id/bookings'--read booked dates info for one property id
 // returns an array of booked dates objects in the form: {bProperty_ID, bUser_ID, bGuest_Total, Date}
-app.get('/BookedDates/:bookedDates', (req, res, next) => {
-  let bProperty_ID = req.params.bookedDates;
-  db.Bookings.findAll( {
-    where: {
-      bProperty_ID
-    }
-  }).then(property => {
-    console.log('Property: ', property)
-    res.send(property);
+app.get('/api/rooms/:id/bookings', (req, res, next) => {
+  let bProperty_ID = req.params.id;
+  db.getBookings(bProperty_ID, (bookings) => {
+    res.send(bookings);
     next();
   });
 });
