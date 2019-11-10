@@ -53,7 +53,7 @@ class App extends React.Component {
     if(checkin && checkout) {
       const bCheckin_Date = moment(checkin).format('YYYY-MM-DD');
       const bCheckout_Date = moment(checkout).format('YYYY-MM-DD');
-      let bookedDates = {
+      let booking = {
         bProperty_ID: this.state.propertyID,
         bUser_ID: 1, //hardcoded to id: 1 right now since login functionality not setup
         bGuest_Total: totalGuests,
@@ -71,9 +71,9 @@ class App extends React.Component {
       //   });
       //   bookedDate = moment(bookedDate).add(1, 'days').format('YYYY-MM-DD');
       // }
-      //axios.post('http://3.133.54.136:3000/BookedDates', {
-      axios.post('http://localhost:3000/BookedDates', {
-        bookedDates
+      //axios.post('http://3.133.54.136:3000/api/bookings', {
+      axios.post('http://localhost:3000/api/bookings', {
+        booking
       })
       .catch(function (error) {
         console.log(error);

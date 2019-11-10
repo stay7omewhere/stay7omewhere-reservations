@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const db = require('../databases/index.js');
+const moment = require('moment');
 const compression = require('compression')
 
 app.use(function(req, res, next) {
@@ -49,9 +50,32 @@ app.get('/api/rooms/:id/bookings', (req, res, next) => {
 
 // POST '/api/bookings'--create new bookings for each of the booked dates
 // request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, Date}, all required
-app.post('/BookedDates', (req, res, next) => {
+app.post('/api/bookings', (req, res, next) => {
   // need to make sure the db is checked first
-  db.Bookings.create(req.body.bookedDates).then(res.send());
+  let booking = req.body.booking;
+  //db.Bookings.create(req.body.bookedDates).then(res.send());
+  db.getBookings(booking['bProperty_ID'], (bookings) => {
+    let bookedDates = new Set();
+    for (let i = 0; i < bookings.length; i++) {
+      let date = moment(bookings[i].bcheckin_date);
+      let bCheckout = moment(bookings[i].bcheckout_date);
+      // While the current date is between the checkin and checkout
+      while (bCheckout.diff(date, 'days') >= 0){
+        bookedDates.add(moment(date.format()).format('YYYY-MM-DD'));
+        // After pushing the date to the list, increase the date by 1
+        date = date.add(1, 'days');
+      }
+    }
+    if (bookedDates.has(booking['bCheckin_Date']) || bookedDates.has(booking['bCheckout_Date'])) {
+      res.status(409).send('The dates are already booked');
+    } else {
+      db.insertBooking(booking, (results) => {
+        res.status(201).send(results);
+        next();
+      })
+    }
+  });
+  
   // var promises = [];
   // let bookedDates = req.body.bookedDates;
   // for (let i = 0; i < bookedDates.length; i++) {
@@ -66,7 +90,8 @@ app.post('/BookedDates', (req, res, next) => {
   //   ));
   // }
   // Promise.all(promises);
-})
+});
+
 
 // PUT '/api/bookings'-- update bookings for a particular row
 // request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, bCheckin, bCheckout}
