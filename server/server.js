@@ -1,9 +1,12 @@
+require('newrelic');
 const express = require('express');
 const app = express();
 const path = require('path');
 const db = require('../databases/index.js');
 const moment = require('moment');
-const compression = require('compression')
+const compression = require('compression');
+
+const port = 3000;
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
@@ -75,21 +78,6 @@ app.post('/api/bookings', (req, res, next) => {
       })
     }
   });
-  
-  // var promises = [];
-  // let bookedDates = req.body.bookedDates;
-  // for (let i = 0; i < bookedDates.length; i++) {
-  //   promises.push(db.Bookings.create(
-  //     {
-  //       bProperty_ID: bookedDates[i].bProperty_ID,
-  //       bUser_ID: bookedDates[i].bUser_ID,
-  //       bGuest_Total: bookedDates[i].bGuest_Total,
-  //       bCheckin_Date: bookedDates[i].bCheckin_Date,
-  //       bCheckout_Date: bookedDates[i].bCheckout_Date
-  //     }
-  //   ));
-  // }
-  // Promise.all(promises);
 });
 
 
@@ -103,9 +91,9 @@ app.post('/api/bookings', (req, res, next) => {
 
 // DELETE '/api/bookings'-- delete bookings for a particular booking date row
 // request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, Date}
-// app.put('/api/bookings', (req, res, next) => {
+// app.delete('/api/bookings', (req, res, next) => {
 //   let req.body.bookingsDeletion;
 //   db.Rooms.update(req.body.bookingsDeletion).then().catch()
-// })
+// });
 
-app.listen(3000);
+app.listen(port, () => console.log('Now listening on port', port));

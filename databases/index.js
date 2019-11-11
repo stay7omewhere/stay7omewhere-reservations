@@ -47,7 +47,7 @@ const insertBooking = (booking, callback) => {
   pool
     .query(text, values)
     .then(res => {
-      console.log(res.rows);
+      //console.log(res.rows);
       callback(res.rows);
     })
     .catch(e => console.error(e.stack));

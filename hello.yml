@@ -1,0 +1,13 @@
+config:
+  target: 'http://localhost:3000'
+  phases:
+    - duration: 10
+      arrivalRate: 1000
+  defaults:
+    headers:
+      x-my-service-auth: '987401838271002188298567'
+scenarios:
+  - flow:
+    - get:
+        url: "/rooms/9791879"
+
