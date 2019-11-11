@@ -52,7 +52,7 @@ app.get('/api/rooms/:id/bookings', (req, res, next) => {
 });
 
 // POST '/api/bookings'--create new bookings for each of the booked dates
-// request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, Date}, all required
+// request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, reserved at, Date}, all required
 app.post('/api/bookings', (req, res, next) => {
   // need to make sure the db is checked first
   let booking = req.body.booking;

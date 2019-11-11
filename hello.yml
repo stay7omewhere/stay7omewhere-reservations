@@ -1,13 +1,24 @@
 config:
   target: 'http://localhost:3000'
   phases:
-    - duration: 10
-      arrivalRate: 1000
+    - duration: 60
+      arrivalRate: 10
+  processor: "./artillery.js"
   defaults:
     headers:
       x-my-service-auth: '987401838271002188298567'
 scenarios:
   - flow:
+    - function: "setID"
     - get:
-        url: "/rooms/9791879"
+        url: "/rooms/{{ id }}"
+    # - get:
+    #     url: "/api/rooms/{{ id }}/bookings"
+    # -function: "setJSONBody"
+    # - post:
+    #     url: "/api/bookings"
+    #     json: 
+    #       "bProperty_ID": 
+
+
 
