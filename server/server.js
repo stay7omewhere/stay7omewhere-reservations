@@ -55,7 +55,7 @@ app.get('/api/rooms/:id/bookings', (req, res, next) => {
 // request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, reserved at, Date}, all required
 app.post('/api/bookings', (req, res, next) => {
   // need to make sure the db is checked first
-  let booking = req.body.booking;
+  let booking = req.body;
   //db.Bookings.create(req.body.bookedDates).then(res.send());
   db.getBookings(booking['bProperty_ID'], (bookings) => {
     let bookedDates = new Set();

@@ -72,9 +72,7 @@ class App extends React.Component {
       //   bookedDate = moment(bookedDate).add(1, 'days').format('YYYY-MM-DD');
       // }
       //axios.post('http://3.133.54.136:3000/api/bookings', {
-      axios.post('http://localhost:3000/api/bookings', {
-        booking
-      })
+      axios.post('http://localhost:3000/api/bookings', booking)
       .catch(function (error) {
         console.log(error);
       });
