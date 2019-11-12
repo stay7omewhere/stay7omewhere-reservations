@@ -1,3 +1,12 @@
 node_modules/
 server/config/sqlConfig.js
 sqlConfig.env
+
+databases/data/bookings.csv
+databases/data/bookings.csv.gz
+databases/data/rooms.csv
+databases/data/rooms.csv.gz
+databases/data/users.csv
+databases/data/users.csv.gz
+
+.DS_Store

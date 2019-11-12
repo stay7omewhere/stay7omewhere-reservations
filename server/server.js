@@ -24,16 +24,16 @@ app.use(express.json());
 
 // USE '/rooms/:id'
 // serves static files
-app.use('/:id', express.static(path.join(__dirname, '../public')));
+app.use('/rooms/:id', express.static(path.join(__dirname, '../public')));
 
-// GET '/api/listings/:id'--read property info for one property id
+// GET '/api/rooms/:id'--read property info for one property id
 // returns an array with a single object including all property information in the form:
 // [{pID, pMax_guests, pNightly_price, pCleaning_fee, pService_fee, pTaxes_fees, pBulkDiscount, pRequired_Week_Booking_Days, pRating, pReviews}]
-app.get('/id/:id', (req, res, next) => {
-  let pID = req.params.id;
-  db.Properties.findAll( {
+app.get('/api/rooms/:id', (req, res, next) => {
+  let rID = req.params.id;
+  db.Rooms.findAll( {
     where: {
-      pID
+      rID
     }
   }).then(property => {
     res.send(property);
@@ -41,15 +41,16 @@ app.get('/id/:id', (req, res, next) => {
   });
 });
 
-// GET '/api/listings/:id/bookings'--read booked dates info for one property id
+// GET '/api/rooms/:id/bookings'--read booked dates info for one property id
 // returns an array of booked dates objects in the form: {bProperty_ID, bUser_ID, bGuest_Total, Date}
 app.get('/BookedDates/:bookedDates', (req, res, next) => {
   let bProperty_ID = req.params.bookedDates;
-  db.Booked.findAll( {
+  db.Bookings.findAll( {
     where: {
       bProperty_ID
     }
   }).then(property => {
+    console.log('Property: ', property)
     res.send(property);
     next();
   });
@@ -58,27 +59,37 @@ app.get('/BookedDates/:bookedDates', (req, res, next) => {
 // POST '/api/bookings'--create new bookings for each of the booked dates
 // request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, Date}, all required
 app.post('/BookedDates', (req, res, next) => {
-  var promises = [];
-  let bookedDates = req.body.bookedDates;
-  for (let i = 0; i < bookedDates.length; i++) {
-    promises.push(db.Booked.create({bProperty_ID: bookedDates[i].bProperty_ID, bUser_ID: bookedDates[i].bUser_ID, bGuest_Total: bookedDates[i].bGuest_Total, Date: bookedDates[i].Date}));
-  }
-  Promise.all(promises);
+  // need to make sure the db is checked first
+  db.Bookings.create(req.body.bookedDates).then(res.send());
+  // var promises = [];
+  // let bookedDates = req.body.bookedDates;
+  // for (let i = 0; i < bookedDates.length; i++) {
+  //   promises.push(db.Bookings.create(
+  //     {
+  //       bProperty_ID: bookedDates[i].bProperty_ID,
+  //       bUser_ID: bookedDates[i].bUser_ID,
+  //       bGuest_Total: bookedDates[i].bGuest_Total,
+  //       bCheckin_Date: bookedDates[i].bCheckin_Date,
+  //       bCheckout_Date: bookedDates[i].bCheckout_Date
+  //     }
+  //   ));
+  // }
+  // Promise.all(promises);
 })
 
 // PUT '/api/bookings'-- update bookings for a particular row
-// request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, Date}
+// request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, bCheckin, bCheckout}
 // returns changed row as an object using the second parameter in 
 // app.put('/api/bookings', (req, res, next) => {
 //   let req.body.bookingsUpdates;
-//   db.Properties.update(req.body.bookingsUpdates).then().catch()
+//   db.Rooms.update(req.body.bookingsUpdates).then().catch()
 // })
 
 // DELETE '/api/bookings'-- delete bookings for a particular booking date row
 // request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, Date}
 // app.put('/api/bookings', (req, res, next) => {
 //   let req.body.bookingsDeletion;
-//   db.Properties.update(req.body.bookingsDeletion).then().catch()
+//   db.Rooms.update(req.body.bookingsDeletion).then().catch()
 // })
 
 app.listen(3000);

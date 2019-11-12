@@ -19,14 +19,14 @@ var shouldBeDisplayed = function(value) {
 }
 
 var populateBookedDates = function(bUser_ID) {
-  var startDate = moment().format();
-  var endDate   = moment().endOf('month').format();
+  var startDate = moment().format(); // Gets the current date and time YYYY-MM-DDT##:##:-##:##
+  var endDate   = moment().endOf('month').format(); // Gets last day of the month in form ^
   var bookedDates = [];
-  for (let k = 1; k<= 100; k++) {
-    for (let i = 0; i < 4; i++) {
+  for (let k = 1; k<= 100; k++) { //iterates through all 100 users
+    for (let i = 0; i < 4; i++) { //iterates through 4 months
       var generatedDates = new Set();
-      var bookedDatesPerMonth = getRandomInt(3, 11);
-      for (let j = 0; j < bookedDatesPerMonth; j++) {
+      var bookedDatesPerMonth = getRandomInt(3, 11); 
+      for (let j = 0; j < bookedDatesPerMonth; j++) { //iterates through the random bookings count
         var date = moment(faker.date.between(startDate, endDate)).format('YYYY-MM-DD');
         if(generatedDates.has(date)) {
           while(generatedDates.has(date)) {
@@ -53,28 +53,28 @@ db.Users.create({ username: username }).catch(err => console.log(err));
 var records = [];
 for (let i = 1; i <= 100; i++) {
 
-  var pMax_guests = getRandomInt(4,13);
-  var pNightly_price = getRandomInt(89, 326);
-  var pCleaning_fee = getRandomInt(35,81); 
-  var pService_fee = 0.13;  //13% pNightly_price + pCleaning_Fee
+  var rMax_guests = getRandomInt(4,13);
+  var rNightly_price = getRandomInt(89, 326);
+  var rCleaning_fee = getRandomInt(35,81); 
+  var rService_fee = 0.13;  //13% pNightly_price + pCleaning_Fee
   
-  var pTaxes_fees = shouldBeDisplayed(getRandomInt(3,10));
-  var pBulkDiscount = shouldBeDisplayed(0.05);
+  var rTaxes_fees = shouldBeDisplayed(getRandomInt(3,10));
+  var rBulkDiscount = shouldBeDisplayed(0.05);
   
 
-  var pRequired_Week_Booking_Days = getRandomInt(3,8); 
-  var pRating = Math.floor(Math.random() * (500 - 100) + 100) / 100;
-  var pReviews = getRandomInt(5,2750);
+  var rRequired_Week_Booking_Days = getRandomInt(3,8); 
+  var rRating = Math.floor(Math.random() * (500 - 100) + 100) / 100;
+  var rReviews = getRandomInt(5,2750);
 
-  records.push({ pMax_guests: pMax_guests,
-    pNightly_price: pNightly_price,
-    pCleaning_fee: pCleaning_fee,
-    pService_fee: pService_fee,
-    pTaxes_fees: pTaxes_fees,
-    pBulkDiscount: pBulkDiscount,
-    pRequired_Week_Booking_Days: pRequired_Week_Booking_Days,
-    pRating: pRating,
-    pReviews: pReviews});
+  records.push({ rMax_guests: rMax_guests,
+    rNightly_price: rNightly_price,
+    rCleaning_fee: rCleaning_fee,
+    rService_fee: rService_fee,
+    rTaxes_fees: rTaxes_fees,
+    rBulkDiscount: rBulkDiscount,
+    rRequired_Week_Booking_Days: rRequired_Week_Booking_Days,
+    rRating: rRating,
+    rReviews: rReviews});
 }
 
-db.Properties.bulkCreate(records).then(() => populateBookedDates(1));
+db.Rooms.bulkCreate(records).then(() => populateBookedDates(1));

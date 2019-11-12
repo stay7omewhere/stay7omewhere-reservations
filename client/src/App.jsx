@@ -19,15 +19,15 @@ class App extends React.Component {
 
     this.state = {
       propertyInfo: {
-        pMax_guests: null, 
-        pNightly_price: null, 
-        pBulkDiscount: null,
-        pCleaning_fee: null,
-        pService_fee: null,
-        pTaxes_fees: null,
-        pRequired_Week_Booking_Days: null, 
-        pRating: null, 
-        pReviews: null 
+        rMax_guests: null, 
+        rNightly_price: null, 
+        rBulkDiscount: null,
+        rCleaning_fee: null,
+        rService_fee: null,
+        rTaxes_fees: null,
+        rRequired_Week_Booking_Days: null, 
+        rRating: null, 
+        rReviews: null 
       },
       bookingDisplay: [],
       numReservedDates: null,
@@ -36,7 +36,7 @@ class App extends React.Component {
       totalServiceFee: null,
       totalWeeklyDiscount: null,
       totalAmount: null,
-      propertyID: window.location.href.split('/')[3],
+      propertyID: window.location.href.split('/')[4],
       checkinCheckout: [null,null],
     };
 
@@ -51,18 +51,26 @@ class App extends React.Component {
 
   postBookedDates(checkin, checkout, totalGuests) {
     if(checkin && checkout) {
-      let bookedDate = moment(checkin).format('YYYY-MM-DD');
-      let bookedDates = [];
-      for(let i = 0; i <= this.state.numReservedDates; i++) {
-        bookedDates.push({
-            bProperty_ID: this.state.propertyID,
-            bUser_ID: 1, //hardcoded to id: 1 right now since login functionality not setup
-            Date: bookedDate,
-            // create number of guests? (for update)?
-            bGuest_Total: totalGuests
-        });
-        bookedDate = moment(bookedDate).add(1, 'days').format('YYYY-MM-DD');
-      }
+      const bCheckin_Date = moment(checkin).format('YYYY-MM-DD');
+      const bCheckout_Date = moment(checkout).format('YYYY-MM-DD');
+      let bookedDates = {
+        bProperty_ID: this.state.propertyID,
+        bUser_ID: 1, //hardcoded to id: 1 right now since login functionality not setup
+        bGuest_Total: totalGuests,
+        bCheckin_Date,
+        bCheckout_Date
+      };
+      // let bookedDate = moment(checkin).format('YYYY-MM-DD');
+      // let bookedDates = [];
+      // for(let i = 0; i <= this.state.numReservedDates; i++) {
+      //   bookedDates.push({
+      //       bProperty_ID: this.state.propertyID,
+      //       bUser_ID: 1, //hardcoded to id: 1 right now since login functionality not setup
+      //       Date: bookedDate,
+      //       bGuest_Total: totalGuests
+      //   });
+      //   bookedDate = moment(bookedDate).add(1, 'days').format('YYYY-MM-DD');
+      // }
       //axios.post('http://3.133.54.136:3000/BookedDates', {
       axios.post('http://localhost:3000/BookedDates', {
         bookedDates
@@ -74,9 +82,10 @@ class App extends React.Component {
   }
 
   getPropertyInfo() {
-    // axios.get('http://3.133.54.136:3000/id/' + this.state.propertyID)
-    axios.get('http://localhost:3000/id/' + this.state.propertyID)
+    // axios.get('http://3.133.54.136:3000/api/rooms/' + this.state.propertyID)
+    axios.get('http://localhost:3000/api/rooms/' + this.state.propertyID)
       .then((res) => {
+        console.log('res data /:id ', res.data)
         let propertyInfo = JSON.parse(JSON.stringify(this.state.propertyInfo));
         for(let key in propertyInfo) {
           if(typeof res.data[0][key] === 'string') {
@@ -100,18 +109,18 @@ class App extends React.Component {
 
     let bookingDisplay = [];
     if(this.state.numReservedDates) {
-      totalPrice = this.state.propertyInfo.pNightly_price * this.state.numReservedDates;
-      totalServiceFee = this.state.propertyInfo.pService_fee * totalPrice;
-      totalWeeklyDiscount = -(totalPrice * this.state.propertyInfo.pBulkDiscount);
+      totalPrice = this.state.propertyInfo.rNightly_price * this.state.numReservedDates;
+      totalServiceFee = this.state.propertyInfo.rService_fee * totalPrice;
+      totalWeeklyDiscount = -(totalPrice * this.state.propertyInfo.rBulkDiscount);
       totalAmount = totalPrice + totalServiceFee + totalWeeklyDiscount + 
-                    this.state.propertyInfo.pCleaning_fee + this.state.propertyInfo.pTaxes_fees;
+                    this.state.propertyInfo.rCleaning_fee + this.state.propertyInfo.rTaxes_fees;
 
       let possibleBookingDisplays = {
-              'pNightly_price': [`$${this.state.propertyInfo.pNightly_price} x ${this.state.numReservedDates} nights`, totalPrice], 
-              'pBulkDiscount' : [`${100 - (this.state.propertyInfo.pBulkDiscount * 100)}% weekly price discount`, totalWeeklyDiscount],
-              'pCleaning_fee' : ['Cleaning Fee', this.state.propertyInfo.pCleaning_fee], 
-              'pService_fee'  : ['Service fee', totalServiceFee], 
-              'pTaxes_fees'   : ['Occupancy taxes and fees', this.state.propertyInfo.pTaxes_fees] 
+              'rNightly_price': [`$${this.state.propertyInfo.rNightly_price} x ${this.state.numReservedDates} nights`, totalPrice], 
+              'rBulkDiscount' : [`${100 - (this.state.propertyInfo.rBulkDiscount * 100)}% weekly price discount`, totalWeeklyDiscount],
+              'rCleaning_fee' : ['Cleaning Fee', this.state.propertyInfo.rCleaning_fee], 
+              'rService_fee'  : ['Service fee', totalServiceFee], 
+              'rTaxes_fees'   : ['Occupancy taxes and fees', this.state.propertyInfo.rTaxes_fees] 
             };
 
       for (let key in this.state.propertyInfo) {
@@ -161,20 +170,20 @@ class App extends React.Component {
 
   componentDidMount() {
     this.getPropertyInfo();
-    console.log(window.location.href.split('/')[3]);
+    console.log('Accessing property: ', window.location.href.split('/')[4]);
   }
 
   render() {
     return(
       <div className={styles.container}>
         <div className={styles.propertyContainer}>
-          <PropertyDetail pricePerNight={this.state.propertyInfo.pNightly_price}
-                          starRating={this.state.propertyInfo.pRating}
-                          numReviews={this.state.propertyInfo.pReviews}/>
+          <PropertyDetail pricePerNight={this.state.propertyInfo.rNightly_price}
+                          starRating={this.state.propertyInfo.rRating}
+                          numReviews={this.state.propertyInfo.rReviews}/>
         </div>
         <div className={styles.calendarContainer}>
-          {this.state.propertyInfo.pRequired_Week_Booking_Days
-            ? <Calendar requiredBookingDays={this.state.propertyInfo.pRequired_Week_Booking_Days}
+          {this.state.propertyInfo.rRequired_Week_Booking_Days
+            ? <Calendar requiredBookingDays={this.state.propertyInfo.rRequired_Week_Booking_Days}
                         getNumReservedDates={this.getNumReservedDates}
                         propertyID={this.state.propertyID}
                         checkinCheckout={this.state.checkinCheckout}
@@ -183,8 +192,8 @@ class App extends React.Component {
           
         </div> 
         <div className={styles.guestsContainer}>
-          {this.state.propertyInfo.pMax_guests 
-            ? <Guests pMax_guests={this.state.propertyInfo.pMax_guests}
+          {this.state.propertyInfo.rMax_guests 
+            ? <Guests rMax_guests={this.state.propertyInfo.rMax_guests}
             getTotalGuests={this.getTotalGuests}/>
             : <GuestsLoading/>}
         </div>

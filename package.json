@@ -12,8 +12,11 @@
     "build-production": "NODE_ENV=production webpack --config ./webpack.production.config.js",
     "deploy": "npm run build-production & npm start",
     "schema": "mysql -u root -p < ./server/data/schema.sql",
+    "postgreSQLschema": "psql postgres < ./databases/postgresql/schema.sql",
     "dump": "mysql -u root -p < ./dump.sql",
-    "dockerSchema": "mysql -h 127.0.0.1 -u root -p <./server/data/schema.sql"
+    "dockerSchema": "mysql -h 127.0.0.1 -u root -p <./server/data/schema.sql",
+    "generateCsvs": "node databases/dataGenerator.js",
+    "seedMongoDb": "node databases/mongodb/dbindex.js"
   },
   "author": "",
   "license": "ISC",
@@ -31,17 +34,18 @@
     "style-loader": "^1.0.0"
   },
   "dependencies": {
-    "webpack": "^4.41.0",
-    "webpack-cli": "^3.3.9",
-    "save-dev": "0.0.1-security",
     "axios": "^0.19.0",
+    "compression": "^1.7.4",
     "express": "^4.17.1",
     "express-react-views": "^0.11.0",
+    "fast-csv": "^3.4.0",
     "moment": "^2.24.0",
     "mysql2": "^1.7.0",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
+    "save-dev": "0.0.1-security",
     "sequelize": "^5.19.5",
-    "compression": "^1.7.4"
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9"
   }
 }
