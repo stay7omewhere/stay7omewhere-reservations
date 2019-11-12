@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "react-dev": "webpack -w",
-    "start": "nodemon ./server/server.js",
+    "start": "node ./server/server.js",
     "build": "webpack",
     "build-production": "NODE_ENV=production webpack --config ./webpack.production.config.js",
     "deploy": "npm run build-production & npm start",
