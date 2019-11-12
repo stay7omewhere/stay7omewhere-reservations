@@ -18,3 +18,8 @@ databases/data/users.csv
 databases/data/users.csv.gz
 
 .DS_Store
+
+newrelic.js
+
+newrelic_agent.log
+npm-debug.log
