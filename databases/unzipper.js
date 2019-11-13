@@ -2,9 +2,10 @@ const zlib = require('zlib');
 const fs = require('fs');
 const path = require('path');
 
-const gunzip = zlib.createGunzip();
-
-const unzipper = function(inp, out, callback) {
+const unzipper = function(inpPath, outPath) {
+  const gunzip = zlib.createGunzip();
+  const inp = fs.createReadStream(path.resolve(__dirname, 'data', inpPath));
+  const out = fs.createWriteStream(path.resolve(__dirname, 'data', outPath));
     
   inp.pipe(gunzip)
     .on('error', () => {
@@ -21,14 +22,10 @@ const unzipper = function(inp, out, callback) {
     })
 };
 
-const userInp = fs.createReadStream(path.resolve(__dirname, 'data', 'users.csv.gz'));
-const userOut = fs.createWriteStream(path.resolve(__dirname, 'data', 'users.csv'));
-unzipper(userInp, userOut, () => {
-  const roomsInp = fs.createReadStream(path.resolve(__dirname, 'data', 'rooms.csv.gz'));
-  const roomsOut = fs.createWriteStream(path.resolve(__dirname, 'data', 'rooms.csv'));
-  unzipper(roomsInp, roomsOut, () => {
-    const bookingsInp = fs.createReadStream(path.resolve(__dirname, 'data', 'bookings.csv.gz'));
-    const bookingsOut = fs.createWriteStream(path.resolve(__dirname, 'data', 'bookings.csv'));
-    unzipper(bookingsInp, bookingsOut, () => {console.log('gUnzips complete')});
-  });
-});
+unzipper('users.csv.gz', 'users.csv');
+unzipper('rooms.csv.gz', 'rooms.csv');
+unzipper('bookings1.csv.gz', 'bookings1.csv');
+unzipper('bookings2.csv.gz', 'bookings2.csv');
+unzipper('bookings3.csv.gz', 'bookings3.csv');
+unzipper('bookings4.csv.gz', 'bookings4.csv');
+unzipper('bookings5.csv.gz', 'bookings5.csv');

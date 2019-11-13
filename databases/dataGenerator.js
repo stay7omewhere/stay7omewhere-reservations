@@ -4,14 +4,27 @@ const path = require('path');
 const moment = require('moment');
 const seed = require('./seedHelpers.js')
 
-function writeTenMillion(writer, encoding, startId, dataFormatter, callback) {
-  let i = 100; //************************************** 10000000;
-  let id = startId;
+let total = 10000000; //************************************** 10000000;
+bID = 0;
+rID = 0;
+
+let start = moment()
+console.log(start.format());
+
+function writeTenMillion(writer, encoding, total, dataFormatter, callback) {
+  let i = total; //************************************** 10000000;
+  let id = 0;
   function write() {
     let ok = true;
     do {
       i -= 1;
       id += 1;
+
+      if (i === (1/5)*total || i === (2/5)*total || i === (3/5)*total || i === (4/5)*total) {
+        let now = moment();
+        console.log(`at i = ${i}: ${now.diff(start, 'seconds')} seconds`);
+      }
+      
       const data = dataFormatter(id)
       if (i === 0) {
         writer.write(data, encoding, callback);
@@ -30,10 +43,8 @@ function writeTenMillion(writer, encoding, startId, dataFormatter, callback) {
   write()
 }
 
-function writeTenMillionBookings(writer, encoding, callback) {
-  let k = 100; //**************************************10000000;
-  let rID = 0;
-  let id = 0;
+function writeTenMillionBookings(writer, encoding, subTotal, callback) {
+  let k = subTotal; //**************************************10000000;
   let pseudoRandomBookingsID = 0;
   let pseudoRandomStayID = 0;
   let pseudoRandomGuestsID = 0;
@@ -46,7 +57,13 @@ function writeTenMillionBookings(writer, encoding, callback) {
     let ok = true;
 
     do {
-      k -= 1;
+      k -= 1; 
+
+      if (k === (1/5)*subTotal || k === (2/5)*subTotal || k === (3/5)*subTotal || k === (4/5)*subTotal) {
+        let now = moment();
+        console.log(`at k = ${k}: ${now.diff(start, 'minutes')} minutes`);
+      }
+
       rID += 1;
         let startMoment = moment()
         let startDate = startMoment.format(); // Gets the current date and time YYYY-MM-DDT##:##:-##:##
@@ -75,17 +92,17 @@ function writeTenMillionBookings(writer, encoding, callback) {
           }
 
           if (seed.verifyDatesInSet(generatedDates, checkinMoment, checkoutMoment)) {
-            id += 1;
+            bID += 1;
             
             let bProperty_ID = rID;
-            let bUser_ID = Math.ceil(Math.random() * 100); //************************************** 10000000
+            let bUser_ID = faker.random.number({min: 1, max: total}); //************************************** 10000000
             let bGuest_Total = pseudoGuestTotal[pseudoRandomGuestsID];
             let bCheckin_Date = checkinMoment.format('YYYY-MM-DD');
             let bCheckout_Date = checkoutMoment.format('YYYY-MM-DD');
-            let bHeldAt = moment().format();
-            let bReserved = false;
+            let bHeld_At = moment().format('YYYY-MM-DD HH:mm:ss');
+            let reserved = true;
             pseudoRandomGuestsID = (pseudoRandomGuestsID === 9) ? 0 : pseudoRandomGuestsID += 1;
-            let data = `${id},${bProperty_ID},${bUser_ID},${bGuest_Total},${bCheckin_Date},${bCheckout_Date},${bHeldAt},${bReserved}\n`;
+            let data = `${bID},${bProperty_ID},${bUser_ID},${bGuest_Total},${bCheckin_Date},${bCheckout_Date},${bHeld_At},${reserved}\n`;
             
             if (k === 0) {
               writer.write(data, encoding, callback);
@@ -111,23 +128,48 @@ function writeTenMillionBookings(writer, encoding, callback) {
   write()
 }
 
+
+function writeBookingsChunk(csv, callback) {
+  const writeBookings = fs.createWriteStream(path.resolve(__dirname, 'data', csv));
+  writeBookings.write('bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved\n', 'utf8');
+  
+  writeTenMillionBookings(writeBookings, 'utf-8', (total/5), () => {
+    writeBookings.end();
+    let now = moment();
+    console.log('bookings ended: ', now.diff(start, 'minutes'), ' minutes');
+    callback();
+  });
+}
+
 const writeUsers = fs.createWriteStream(path.resolve(__dirname, 'data', 'users.csv'));
 writeUsers.write('userID,username\n', 'utf8');
 
-writeTenMillion(writeUsers, 'utf-8', 0, seed.userRowFormatter, () => {
+writeTenMillion(writeUsers, 'utf-8', total, seed.userRowFormatter, () => {
   writeUsers.end();
+  let now = moment();
+  console.log('users ended: ', now.diff(start, 'seconds'), ' seconds');
+
+  const writeRooms = fs.createWriteStream(path.resolve(__dirname, 'data', 'rooms.csv'));
+  writeRooms.write('rID,rMax_guests,rNightly_price,rCleaning_fee,rService_fee,rTaxes_fees,rBulkDiscount,rRequired_Week_Booking_Days,rRating,rReviews\n', 'utf8');
+  
+  writeTenMillion(writeRooms, 'utf-8', total, seed.roomRowFormatter, () => {
+    writeRooms.end();
+    let now = moment();
+    console.log('rooms ended: ', now.diff(start, 'seconds'), ' seconds');
+
+    writeBookingsChunk(`bookings1.csv`, () => {
+      writeBookingsChunk(`bookings2.csv`, () => {
+        writeBookingsChunk(`bookings3.csv`, () => {
+          writeBookingsChunk(`bookings4.csv`, () => {
+            writeBookingsChunk(`bookings5.csv`, () => {});
+          });
+        });
+      });
+    });
+
+  });
 });
 
-const writeRooms = fs.createWriteStream(path.resolve(__dirname, 'data', 'rooms.csv'));
-writeRooms.write('rID,rMax_guests,rNightly_price,rCleaning_fee,rService_fee,rTaxes_fees,rBulkDiscount,rRequired_Week_Booking_Days,rRating,rReviews\n', 'utf8');
 
-writeTenMillion(writeRooms, 'utf-8', 0, seed.roomRowFormatter, () => {
-  writeRooms.end();
-});
 
-const writeBookings = fs.createWriteStream(path.resolve(__dirname, 'data', 'bookings.csv'));
-writeBookings.write('bID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeldAt,bReserved\n', 'utf8');
 
-writeTenMillionBookings(writeBookings, 'utf-8', () => {
-  writeBookings.end();
-});

@@ -58,6 +58,8 @@ POST '/api/bookings' --create new bookings for each of the booked dates
       bGuest_Total,   (integer, not null, default 1)
       bCheckin_Date,  (date, not null)
       bCheckout_Date  (date, not null)
+      bHeld_At        (TIMESTAMP)
+      bReserved       (BOOLEAN, DEFAULT FALSE)
     }
 - returns completed status code
 
@@ -68,6 +70,8 @@ PUT '/api/bookings' --update bookings for a particular booking date row
       bGuest_Total,   (integer, not null, default 1)
       bCheckin_Date,  (date, not null)
       bCheckout_Date  (date, not null)
+      bHeld_At        (TIMESTAMP)
+      bReserved       (BOOLEAN, DEFAULT FALSE) *For most use cases, this will commonly be included
     }
 - returns completed status code
 

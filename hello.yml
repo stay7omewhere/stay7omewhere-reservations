@@ -1,0 +1,27 @@
+config:
+  target: 'http://localhost:3000'
+  phases:
+    - duration: 60
+      arrivalRate: 100
+  processor: "./artillery.js"
+  defaults:
+    headers:
+      x-my-service-auth: '987401838271002188298567'
+scenarios:
+  - name: "Go to listing page"
+    flow:
+    - function: "setID"
+    - get:
+        url: "/rooms/{{ id }}"
+  - name: "Post booking"
+    flow:
+    - function: "setID"
+    - post:
+        url: "/api/bookings"
+        json:
+          bProperty_ID: "{{ id }}"
+          bUser_ID: "{{ id }}"
+          bGuest_Total: 5
+          bCheckin_Date: "2020-03-01"
+          bCheckout_Date: "2020-03-04"
+          bHeld_At: "2019-11-11 12:44:03"

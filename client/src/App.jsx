@@ -53,7 +53,7 @@ class App extends React.Component {
     if(checkin && checkout) {
       const bCheckin_Date = moment(checkin).format('YYYY-MM-DD');
       const bCheckout_Date = moment(checkout).format('YYYY-MM-DD');
-      let bookedDates = {
+      let booking = {
         bProperty_ID: this.state.propertyID,
         bUser_ID: 1, //hardcoded to id: 1 right now since login functionality not setup
         bGuest_Total: totalGuests,
@@ -71,10 +71,8 @@ class App extends React.Component {
       //   });
       //   bookedDate = moment(bookedDate).add(1, 'days').format('YYYY-MM-DD');
       // }
-      //axios.post('http://3.133.54.136:3000/BookedDates', {
-      axios.post('http://localhost:3000/BookedDates', {
-        bookedDates
-      })
+      //axios.post('http://3.133.54.136:3000/api/bookings', {
+      axios.post('http://localhost:3000/api/bookings', booking)
       .catch(function (error) {
         console.log(error);
       });
@@ -86,14 +84,27 @@ class App extends React.Component {
     axios.get('http://localhost:3000/api/rooms/' + this.state.propertyID)
       .then((res) => {
         console.log('res data /:id ', res.data)
-        let propertyInfo = JSON.parse(JSON.stringify(this.state.propertyInfo));
+        let propertyInfo = {
+          rMax_guests: res.data['rmax_guests'],
+          rNightly_price: res.data['rnightly_price'],
+          rBulkDiscount: res.data['rbulkdiscount'],
+          rCleaning_fee: res.data['rcleaning_fee'],
+          rService_fee: res.data['rservice_fee'],
+          rTaxes_fees: res.data['rtaxes_fees'],
+          rRequired_Week_Booking_Days: res.data['rrequired_week_booking_days'], 
+          rRating: res.data['rrating'], 
+          rReviews: res.data['rreviews'] 
+        };
+        
+        // JSON.parse(JSON.stringify(this.state.propertyInfo));
+        console.log('property info: ', propertyInfo)
         for(let key in propertyInfo) {
-          if(typeof res.data[0][key] === 'string') {
-            propertyInfo[key] = Number(res.data[0][key]);
-          } else {
-            propertyInfo[key] = res.data[0][key];
-          }
+          //data stored as money needs to have the $ sliced out, turn to number
+          if(typeof propertyInfo[key] === 'string') {
+            propertyInfo[key] = Number(propertyInfo[key].slice(1));
+          } 
         }
+        console.log('property info after fix: ', propertyInfo)
         this.setState({
           propertyInfo
         });

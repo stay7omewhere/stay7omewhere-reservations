@@ -54,24 +54,21 @@ class Calendar extends React.Component {
   }
 
   getBookedDates() {
-    // axios.get('http://3.133.54.136:3000/BookedDates/' + this.propertyID)
-    axios.get('http://localhost:3000/BookedDates/' + this.propertyID)
+    // axios.get(`http://3.133.54.136:3000/api/rooms/${this.propertyID}/bookings`)
+    axios.get(`http://localhost:3000/api/rooms/${this.propertyID}/bookings`)
     .then((res) => {
       console.log('Get BookedDates for Calendar res.data: ', res.data)
       let bookedDates = [];
       for (let i = 0; i < res.data.length; i++) {
-        let date = moment(res.data[i].bCheckin_Date);
-        let bCheckout =  res.data[i].bCheckout_Date;
+        let date = moment(res.data[i].bcheckin_date);
+        let bCheckout =  moment(res.data[i].bcheckout_date);
         // While the current date is between the checkin and checkout
-        while (date.format() <= bCheckout){
-          bookedDates.push(date)
+        while (bCheckout.diff(date, 'days') >= 0){
+          bookedDates.push(moment(date.format()));
           // After pushing the date to the list, increase the date by 1
-          date = moment(date.add(1, 'days').format())
+         date = date.add(1, 'days');
         }
       }
-      // for (let i = 0; i < res.data.length; i++) {
-      //   bookedDates.push(moment(res.data[i].Date))
-      // }
       this.setState({
         bookedDates
       }, () => this.updateCurrentMonth());
@@ -98,7 +95,7 @@ class Calendar extends React.Component {
 
   calculateBookedDates(dayArray) {
     let currentMonthBookedDates = this.state.bookedDates.filter(
-                                  monthDates => (monthDates.month() === this.state.currentMonth.month()) && (monthDates.year() === this.state.currentMonth.year()));
+      monthDates => (monthDates.month() === this.state.currentMonth.month()) && (monthDates.year() === this.state.currentMonth.year()));
     for (let i = 0; i < currentMonthBookedDates.length; i++) {
       dayArray[this.calculateIndexOfDay(Number(currentMonthBookedDates[i].format('DD')))].invalidDate = true;
     }

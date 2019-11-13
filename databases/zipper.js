@@ -2,9 +2,11 @@ const zlib = require('zlib');
 const fs = require('fs');
 const path = require('path');
 
-const gzip = zlib.createGzip();
-
-const zipper = function(inp, out, callback) {
+const zipper = function(inpPath, outPath) {
+  const gzip = zlib.createGzip();
+  const inp = fs.createReadStream(path.resolve(__dirname, 'data', inpPath));
+  const out = fs.createWriteStream(path.resolve(__dirname, 'data', outPath));
+    
   inp.pipe(gzip)
     .on('error', () => {
     // handle error
@@ -20,17 +22,10 @@ const zipper = function(inp, out, callback) {
     })
 };
 
-const userInp = fs.createReadStream(path.resolve(__dirname, 'data', 'users.csv'));
-const userOut = fs.createWriteStream(path.resolve(__dirname, 'data', 'users.csv.gz'));
-zipper(userInp, userOut, () => {
-
-  const roomsInp = fs.createReadStream(path.resolve(__dirname, 'data', 'rooms.csv'));
-  const roomsOut = fs.createWriteStream(path.resolve(__dirname, 'data', 'rooms.csv.gz'));
-  zipper(roomsInp, roomsOut, () => {
-
-    const bookingsInp = fs.createReadStream(path.resolve(__dirname, 'data', 'bookings.csv'));
-    const bookingsOut = fs.createWriteStream(path.resolve(__dirname, 'data', 'bookings.csv.gz'));
-    zipper(bookingsInp, bookingsOut, () => {console.log('gZips complete')});
-
-  });
-});
+zipper('users.csv', 'users.csv.gz');
+zipper('rooms.csv', 'rooms.csv.gz');
+zipper('bookings1.csv', 'bookings1.csv.gz');
+zipper('bookings2.csv', 'bookings2.csv.gz');
+zipper('bookings3.csv', 'bookings3.csv.gz');
+zipper('bookings4.csv', 'bookings4.csv.gz');
+zipper('bookings5.csv', 'bookings5.csv.gz');

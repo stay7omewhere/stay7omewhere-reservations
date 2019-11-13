@@ -1,8 +1,12 @@
+require('newrelic');
 const express = require('express');
 const app = express();
 const path = require('path');
-const db = require('./data/db.js');
-const compression = require('compression')
+const db = require('../databases/index.js');
+const moment = require('moment');
+const compression = require('compression');
+
+const port = 3000;
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
@@ -31,51 +35,51 @@ app.use('/rooms/:id', express.static(path.join(__dirname, '../public')));
 // [{pID, pMax_guests, pNightly_price, pCleaning_fee, pService_fee, pTaxes_fees, pBulkDiscount, pRequired_Week_Booking_Days, pRating, pReviews}]
 app.get('/api/rooms/:id', (req, res, next) => {
   let rID = req.params.id;
-  db.Rooms.findAll( {
-    where: {
-      rID
-    }
-  }).then(property => {
-    res.send(property);
+  db.getListing(rID, (listing) => {
+    res.send(listing);
     next();
   });
 });
 
 // GET '/api/rooms/:id/bookings'--read booked dates info for one property id
 // returns an array of booked dates objects in the form: {bProperty_ID, bUser_ID, bGuest_Total, Date}
-app.get('/BookedDates/:bookedDates', (req, res, next) => {
-  let bProperty_ID = req.params.bookedDates;
-  db.Bookings.findAll( {
-    where: {
-      bProperty_ID
-    }
-  }).then(property => {
-    console.log('Property: ', property)
-    res.send(property);
+app.get('/api/rooms/:id/bookings', (req, res, next) => {
+  let bProperty_ID = req.params.id;
+  db.getBookings(bProperty_ID, (bookings) => {
+    res.send(bookings);
     next();
   });
 });
 
 // POST '/api/bookings'--create new bookings for each of the booked dates
-// request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, Date}, all required
-app.post('/BookedDates', (req, res, next) => {
+// request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, reserved at, Date}, all required
+app.post('/api/bookings', (req, res, next) => {
   // need to make sure the db is checked first
-  db.Bookings.create(req.body.bookedDates).then(res.send());
-  // var promises = [];
-  // let bookedDates = req.body.bookedDates;
-  // for (let i = 0; i < bookedDates.length; i++) {
-  //   promises.push(db.Bookings.create(
-  //     {
-  //       bProperty_ID: bookedDates[i].bProperty_ID,
-  //       bUser_ID: bookedDates[i].bUser_ID,
-  //       bGuest_Total: bookedDates[i].bGuest_Total,
-  //       bCheckin_Date: bookedDates[i].bCheckin_Date,
-  //       bCheckout_Date: bookedDates[i].bCheckout_Date
-  //     }
-  //   ));
-  // }
-  // Promise.all(promises);
-})
+  let booking = req.body;
+  //db.Bookings.create(req.body.bookedDates).then(res.send());
+  db.getBookings(booking['bProperty_ID'], (bookings) => {
+    let bookedDates = new Set();
+    for (let i = 0; i < bookings.length; i++) {
+      let date = moment(bookings[i].bcheckin_date);
+      let bCheckout = moment(bookings[i].bcheckout_date);
+      // While the current date is between the checkin and checkout
+      while (bCheckout.diff(date, 'days') >= 0){
+        bookedDates.add(moment(date.format()).format('YYYY-MM-DD'));
+        // After pushing the date to the list, increase the date by 1
+        date = date.add(1, 'days');
+      }
+    }
+    if (bookedDates.has(booking['bCheckin_Date']) || bookedDates.has(booking['bCheckout_Date'])) {
+      res.status(409).send('The dates are already booked');
+    } else {
+      db.insertBooking(booking, (results) => {
+        res.status(201).send(results);
+        next();
+      })
+    }
+  });
+});
+
 
 // PUT '/api/bookings'-- update bookings for a particular row
 // request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, bCheckin, bCheckout}
@@ -87,9 +91,9 @@ app.post('/BookedDates', (req, res, next) => {
 
 // DELETE '/api/bookings'-- delete bookings for a particular booking date row
 // request body is JSON: {bProperty_ID, bUser_ID, bGuest_Total, Date}
-// app.put('/api/bookings', (req, res, next) => {
+// app.delete('/api/bookings', (req, res, next) => {
 //   let req.body.bookingsDeletion;
 //   db.Rooms.update(req.body.bookingsDeletion).then().catch()
-// })
+// });
 
-app.listen(3000);
+app.listen(port, () => console.log('Now listening on port', port));
