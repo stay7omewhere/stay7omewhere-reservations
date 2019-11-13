@@ -45,29 +45,29 @@ CREATE TABLE bookings (
 
 
 COPY users (csvID, username)
-    FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/users.csv' 
+    FROM './databases/data/users.csv' 
     WITH DELIMITER ',' CSV HEADER;
 
 COPY rooms (csvID, rMax_guests, rNightly_price, rCleaning_fee, rService_fee, rTaxes_fees, rBulkDiscount, rRequired_Week_Booking_Days, rRating, rReviews)
-    FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/rooms.csv' 
+    FROM './databases/data/rooms.csv' 
     WITH DELIMITER ',' CSV HEADER NULL 'null';
 
 COPY bookings (csvID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
-    FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/bookings1.csv' 
+    FROM './databases/data/bookings1.csv' 
     WITH DELIMITER ',' CSV HEADER;
 
 COPY bookings (csvID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
-    FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/bookings2.csv' 
+    FROM './databases/data/bookings2.csv' 
     WITH DELIMITER ',' CSV HEADER;
 
 COPY bookings (csvID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
-    FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/bookings3.csv' 
+    FROM './databases/data/bookings3.csv' 
     WITH DELIMITER ',' CSV HEADER;
 
 COPY bookings (csvID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
-    FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/bookings4.csv' 
+    FROM './databases/data/bookings4.csv' 
     WITH DELIMITER ',' CSV HEADER;
 
 COPY bookings (csvID,bProperty_ID,bUser_ID,bGuest_Total,bCheckin_Date,bCheckout_Date,bHeld_At,bReserved)
-    FROM '/Users/lilcare/projects/SDC/stay7omewhere-reservations/databases/data/bookings5.csv' 
+    FROM './databases/data/bookings5.csv' 
     WITH DELIMITER ',' CSV HEADER;
