@@ -10,4 +10,13 @@ ALTER TABLE bookings ADD CONSTRAINT buserfk FOREIGN KEY (bUser_ID) REFERENCES us
 
 CREATE INDEX bpropidx ON bookings (bProperty_ID);
 
+CREATE EXTENSION btree_gist;
+ 
+ALTER TABLE bookings
+ ADD CONSTRAINT unique_checkin_checkout_range
+   EXCLUDE  USING gist
+   ( bProperty_ID WITH =,
+     daterange(bCheckin_Date, bCheckout_Date, '()') WITH &&   -- this is the crucial
+   );
+
 -- CREATE INDEX bpropidx ON bookings (bUser_ID);
