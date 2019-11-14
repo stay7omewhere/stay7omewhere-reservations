@@ -109,6 +109,6 @@ npm run react-dev
 npm start
 ```
 
-6. Go to `localhost:3000/:propertyID/` i.e. localhost:3000/2
+6. Go to `localhost:3000/rooms/:id` i.e. localhost:3000/rooms/2
 
 

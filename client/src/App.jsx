@@ -72,7 +72,8 @@ class App extends React.Component {
       //   bookedDate = moment(bookedDate).add(1, 'days').format('YYYY-MM-DD');
       // }
       //axios.post('http://localhost:3000/api/bookings', booking)
-      axios.post('http://54.183.84.232/api/bookings', booking)
+      // axios.post('/api/bookings', booking)
+      axios.post('http://54.183.84.232:3000/api/bookings', booking)
       .catch(function (error) {
         console.log(error);
       });
@@ -81,7 +82,8 @@ class App extends React.Component {
 
   getPropertyInfo() {
     // axios.get('http://localhost:3000/api/rooms/' + this.state.propertyID)
-    axios.get('http://54.183.84.232/api/rooms/' + this.state.propertyID)
+    // axios.get('/api/rooms/' + this.state.propertyID)
+    axios.get('http://54.183.84.232:3000/api/rooms/' + this.state.propertyID)
       .then((res) => {
         console.log('res data /:id ', res.data)
         let propertyInfo = {
