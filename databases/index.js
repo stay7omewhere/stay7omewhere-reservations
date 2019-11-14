@@ -1,10 +1,12 @@
 const { Pool, Client } = require('pg')
 
 const pool = new Pool({
-  user: process.env.USER,
+  //user: process.env.USER,
+  user: 'postgres',
   host: 'localhost',
   database: 'stay7omewhere_reservations',
-  password: null,
+  //password: null,
+  password: '$password',
   port: 5432,
 })
 
@@ -15,9 +17,9 @@ const getListing = (id, callback) => {
   pool
     .query(text, values)
     .then(res => {
-      callback(res.rows[0]);
+      callback(null, res.rows[0]);
     })
-    .catch(e => console.error(e.stack));
+    .catch(e => callback(e));
 }
 
 const getBookings = (id, callback) => {
@@ -27,12 +29,14 @@ const getBookings = (id, callback) => {
   pool
     .query(text, values)
     .then(res => {
-    callback(res.rows);
+    callback(null, res.rows);
     })
-    .catch(e => console.error(e.stack));
+    .catch(e => callback(e));
 }
 
 const insertBooking = (booking, callback) => {
+  // console.log(booking)
+  // let json = JSON.parse(JSON.stringify(booking));
   const text = `INSERT INTO bookings (bID, bProperty_ID, bUser_ID, bGuest_Total, bCheckin_Date, bCheckout_Date, bHeld_At)
     VALUES (default, $1, $2, $3, $4, $5, $6) `;
   const values = [
@@ -43,14 +47,14 @@ const insertBooking = (booking, callback) => {
     booking['bCheckout_Date'],
     booking['bHeld_At']
   ];
-
+  // console.log(values);
   pool
     .query(text, values)
     .then(res => {
       //console.log(res.rows);
-      callback(res.rows);
+      callback(null, res.rows);
     })
-    .catch(e => console.error(e.stack));
+    .catch(e => callback(e));
 }
 
 

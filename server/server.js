@@ -35,9 +35,13 @@ app.use('/rooms/:id', express.static(path.join(__dirname, '../public')));
 // [{pID, pMax_guests, pNightly_price, pCleaning_fee, pService_fee, pTaxes_fees, pBulkDiscount, pRequired_Week_Booking_Days, pRating, pReviews}]
 app.get('/api/rooms/:id', (req, res, next) => {
   let rID = req.params.id;
-  db.getListing(rID, (listing) => {
-    res.send(listing);
-    next();
+  db.getListing(rID, (err, listing) => {
+    if (err) {
+      res.status(400).send(err);
+    } else {
+      res.send(listing);
+      next();
+    }
   });
 });
 
@@ -45,9 +49,13 @@ app.get('/api/rooms/:id', (req, res, next) => {
 // returns an array of booked dates objects in the form: {bProperty_ID, bUser_ID, bGuest_Total, Date}
 app.get('/api/rooms/:id/bookings', (req, res, next) => {
   let bProperty_ID = req.params.id;
-  db.getBookings(bProperty_ID, (bookings) => {
-    res.send(bookings);
-    next();
+  db.getBookings(bProperty_ID, (err, bookings) => {
+    if (err) {
+      res.status(400).send(err);
+    } else {
+      res.send(bookings);
+      next();
+    }
   });
 });
 
@@ -57,27 +65,14 @@ app.post('/api/bookings', (req, res, next) => {
   // need to make sure the db is checked first
   let booking = req.body;
   //db.Bookings.create(req.body.bookedDates).then(res.send());
-  db.getBookings(booking['bProperty_ID'], (bookings) => {
-    let bookedDates = new Set();
-    for (let i = 0; i < bookings.length; i++) {
-      let date = moment(bookings[i].bcheckin_date);
-      let bCheckout = moment(bookings[i].bcheckout_date);
-      // While the current date is between the checkin and checkout
-      while (bCheckout.diff(date, 'days') >= 0){
-        bookedDates.add(moment(date.format()).format('YYYY-MM-DD'));
-        // After pushing the date to the list, increase the date by 1
-        date = date.add(1, 'days');
-      }
-    }
-    if (bookedDates.has(booking['bCheckin_Date']) || bookedDates.has(booking['bCheckout_Date'])) {
-      res.status(409).send('The dates are already booked');
+  db.insertBooking(booking, (err, results) => {
+    if (err) {
+      res.status(400).send(err);
     } else {
-      db.insertBooking(booking, (results) => {
-        res.status(201).send(results);
-        next();
-      })
+      res.status(201).send(results);
+      next();
     }
-  });
+  })
 });
 
 
