@@ -1,9 +1,9 @@
 const { Pool, Client } = require('pg')
 
 const pool = new Pool({
-  //user: process.env.USER,
+  user: process.env.USER,
   user: 'postgres',
-  host: 'localhost',
+  //host: 'localhost',
   database: 'stay7omewhere_reservations',
   //password: null,
   password: '$password',

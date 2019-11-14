@@ -28,6 +28,7 @@ app.use(express.json());
 
 // USE '/rooms/:id'
 // serves static files
+app.use('/', express.static(path.join(__dirname, '../public')));
 app.use('/rooms/:id', express.static(path.join(__dirname, '../public')));
 
 // GET '/api/rooms/:id'--read property info for one property id
